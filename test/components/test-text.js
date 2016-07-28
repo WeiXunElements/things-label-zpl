@@ -1,9 +1,11 @@
 import { expect } from 'chai'
 import { parseZpl } from '../util'
 
+var { Rect } = require('../../src/components/rect')
 var { Ellipse } = require('../../src/components/ellipse')
+require('../../src/components/text')
 
-describe('Ellipse', function () {
+describe('Text', function () {
 
   describe('그룹에 속하지 않은 경우.', function () {
 
@@ -12,16 +14,16 @@ describe('Ellipse', function () {
     beforeEach(function () {
       model = {
         id: 'target',
-        type: 'ellipse',
-        cx : 100,
-        cy : 150,
-        rx : 50,
-        ry : 50,
+        type: 'text',
+        left : 150,
+        top : 50,
+        width : 100,
+        height : 200,
         lineWidth : 10,
         fillStyle : '',
         strokeStyle : '',
         rotation : '',
-        text : ''
+        text : 'ABCDEFG'
       };
 
       scene_model = {
@@ -32,8 +34,7 @@ describe('Ellipse', function () {
       }
     });
 
-    it('GC 커맨드를 생성해야 한다.', function () {
-
+    it('GB 커맨드를 생성해야 한다.', function () {
       var test_scene = scene.create({
         target: {style:{}},
         model: scene_model
@@ -46,8 +47,21 @@ describe('Ellipse', function () {
       expect(result[0].command).to.equal('FO');
       expect(result[0].params[0]).to.equal(String(bounds.left));
       expect(result[0].params[1]).to.equal(String(bounds.top));
-      expect(result[1].command).to.equal('GC');
+      expect(result[1].command).to.equal('GB');
       expect(result[2].command).to.equal('FS');
+    });
+
+    it('round 값은 0~8로 변환 되어야 한다.', function () {
+
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+
+      expect(result[1].params[4]).to.equal(String(Math.round(model.round * 8 / 100)));
     });
 
   });

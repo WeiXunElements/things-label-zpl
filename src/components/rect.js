@@ -73,8 +73,8 @@ scene.Rect.prototype.toZpl = function() {
 
   // make text command
   if (text) {
-    var texts = new T.Text(this.model);
-    zpl += texts.toZpl(group);
+    // var texts = new T.Text(this.model);
+    zpl += this.toZplForText();
   }
 
   return zpl;

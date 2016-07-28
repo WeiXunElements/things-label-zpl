@@ -5,6 +5,7 @@ var transcoordS2P = require('./transcoord').transcoordS2P
 var rotateCase = require('./transcoord').rotateCase
 
 scene.Component.prototype.toZplForText = function() {
+  // text 에서는 left, top만 위치를 결정함, width, height는 의미가 없음.
   var {
     text = '',
     left = 0,
@@ -24,30 +25,23 @@ scene.Component.prototype.toZplForText = function() {
     lineMargin
   } = this.model
 
-  var {
-    top,
-    left,
-    width,
-    height
-  } = this.bounds
+  if (!width) {
+    this.model.width = charWidth * text.length;
+  }
 
-  // if (!width) {
-  //   this.model.width = charWidth * text.length;
-  // }
-
-  // if (!height || height === '') {
-  //   this.model.height = charHeight;
-  // }
+  if (!height || height === '') {
+    this.model.height = charHeight;
+  }
 
   var startPoint = textTranscoord(this.model)
   left = startPoint.x;
   top = startPoint.y;
 
-  left += group ? group.left || 0 : 0;
-  top += group ? group.top || 0 : 0;
+  // left += group ? group.left || 0 : 0;
+  // top += group ? group.top || 0 : 0;
 
   var rotate = rotation || '';
-  rotate += group ? group.rotation || 0 : 0;
+  // rotate += group ? group.rotation || 0 : 0;
 
   var textAlign = this.model.textAlign || '';
 
@@ -90,7 +84,7 @@ scene.Component.prototype.toZplForText = function() {
   }
 
   var zpl = '';
-  zpl += lineZpl.call(this, group, rotate, left, top);
+  zpl += lineZpl.call(this, rotate);
   commands.forEach(c => {
     zpl += c.join(',') + '\n'
   });
@@ -98,7 +92,11 @@ scene.Component.prototype.toZplForText = function() {
   return zpl;
 }
 
-function lineZpl(group, rotate) {
+scene.Text.prototype.toZpl = function() {
+  return toZplForText()
+}
+
+function lineZpl(rotate) {
   var {
     left,
     top,
@@ -142,7 +140,7 @@ function lineZpl(group, rotate) {
 
   rotatePoints.forEach((point) => {
     let line = new Line(point);
-    zpl += line.toZpl(group);
+    zpl += line.toZpl(null /*group*/);
   });
 
   return zpl;
@@ -164,8 +162,6 @@ function rotateLine(rotate, x, textWidth, y, ty, lineIndex) {
       return {x1: x+ty, x2: x+ty, y1: y, y2: y+textWidth};
       break;
   }
-
-
 }
 
-// exports.Text = text;
+exports.Text = scene.Text;

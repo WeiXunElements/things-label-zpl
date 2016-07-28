@@ -27,8 +27,8 @@ describe('Rect', function () {
 
       scene_model = {
         unit: 'mm',
-        width: 80,
-        height: 40,
+        width: 800,
+        height: 400,
         components: [model]
       }
     });
