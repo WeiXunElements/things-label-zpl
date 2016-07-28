@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/heartyoh/things-label-zpl#readme",
   "devDependencies": {
+    "node-canvas": "Automattic/node-canvas",
     "babel-cli": "^6.3.17",
     "babel-core": "^6.9.1",
     "babel-preset-es2015": "^6.6.0",
@@ -39,7 +40,6 @@
   },
   "dependencies": {
     "things-scene": "hatiolab/things-scene",
-    "node-canvas": "Automattic/node-canvas",
     "image-size": "^0.5.0"
   }
 }

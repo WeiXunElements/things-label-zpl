@@ -13,6 +13,7 @@ exports.revert = function(components) {
 	if (!components) return;
 
 	var zpl = '^XA\n';
+	zpl += '^PW' + (80 / 2.54 * 203) + '\n';
 	zpl = makeZpl(components, zpl)
 	zpl += '^XZ'
 

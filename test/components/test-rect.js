@@ -21,8 +21,7 @@ describe('Rect', function () {
         fillStyle : '',
         strokeStyle : '',
         rotation : '',
-        text : '',
-        round: 20
+        text : ''
       };
 
       scene_model = {
@@ -50,7 +49,9 @@ describe('Rect', function () {
       expect(result[2].command).to.equal('FS');
     });
 
-    it('round 값은 0~8로 변환 되어야 한다.', function () {
+    it('round 값 100은 GB커맨드의 5번째 파라미터가 8로 변환되어야 한다.', function () {    // FIXME
+
+      model.round = 100 // 최대치 100%
 
       var test_scene = scene.create({
         target: {style:{}},
@@ -60,7 +61,22 @@ describe('Rect', function () {
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component.toZpl())
 
-      expect(result[1].params[4]).to.equal(String(Math.round(model.round * 8 / 100)));
+      expect(result[1].params[4]).to.equal('8');
+    });
+
+    it('round 값 50은 GB커맨드의 5번째 파라미터가 4로 변환되어야 한다.', function () {    // FIXME
+
+      model.round = 50 // 최대치 100%
+
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+
+      expect(result[1].params[4]).to.equal('4');
     });
 
   });
