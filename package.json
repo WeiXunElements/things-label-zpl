@@ -38,6 +38,7 @@
     "should": "^8.0.2"
   },
   "dependencies": {
+    "things-scene": "hatiolab/things-scene",
     "image-size": "^0.5.0"
   }
 }

@@ -1,7 +1,10 @@
-var Rect = require('../../src/components/rect').Rect;
-
 import { expect } from 'chai'
 import { parseZpl } from '../util'
+
+require('things-scene/things-scene-min')
+require('../../src/components/rect')
+
+var { Rect } = scene
 
 describe('Rect', function () {
 
@@ -12,20 +15,20 @@ describe('Rect', function () {
     beforeEach(function () {
       model = {
         left : 150,
-  			top : 50,
+        top : 50,
         width : 100,
-  			height : 200,
-  			lineWidth : 10,
-  			fillStyle : '',
-  			strokeStyle : '',
-  			rotation : '',
-  			text : ''
+        height : 200,
+        lineWidth : 10,
+        fillStyle : '',
+        strokeStyle : '',
+        rotation : '',
+        text : ''
       };
     });
 
     it('GB 커맨드를 생성해야 한다.', function () {
 
-      var result = parseZpl(new Rect(model).toZpl());
+      var result = parseZpl(new Rect(model, null).toZpl());
 
       expect(result[0].command).to.equal('FO');
       expect(result[0].params[0]).to.equal(String(model.left));

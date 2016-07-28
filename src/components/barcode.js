@@ -73,7 +73,7 @@ function barcode(properties) {
 			['postal', 					['^BZ'+rotate, height, showText, textAbove]]
 		]);
 
-		
+
 		var params = symbolMap.get(symbol);
 
 		lines.push('^FO' + left + ',' + top)
@@ -83,7 +83,7 @@ function barcode(properties) {
 		} else {
 			lines.push('^FD' + text);
 		}
-		
+
 		lines.push('^FS')
 
 		var zpl = lines.join('\n') + '\n'
