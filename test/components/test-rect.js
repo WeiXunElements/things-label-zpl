@@ -1,6 +1,13 @@
 import { expect } from 'chai'
 import { parseZpl } from '../util'
 
+global.Canvas = require('canvas')
+global.Image = Canvas.Image
+global.screen = {
+  width: 1280,
+  height: 800
+}
+
 require('things-scene/things-scene-min')
 var { Rect } = require('../../src/components/rect')
 
@@ -12,7 +19,7 @@ describe('Rect', function () {
 
     beforeEach(function () {
       model = {
-        id: 'rect',
+        id: 'target',
         type: 'rect',
         left : 150,
         top : 50,
@@ -36,10 +43,11 @@ describe('Rect', function () {
 
     it('GB 커맨드를 생성해야 한다.', function () {
       var test_scene = scene.create({
+        target: {style:{}},
         model: scene_model
       });
 
-      var component = test_scene.findFirst('#rect')
+      var component = test_scene.findFirst('#target')
       var result = parseZpl(component.toZpl())
       var bounds = component.bounds
 
@@ -52,9 +60,13 @@ describe('Rect', function () {
 
     it('round 값은 0~8로 변환 되어야 한다.', function () {
 
-      var component = new Rect(model, null)
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
       var result = parseZpl(component.toZpl())
-      var bounds = component.bounds
 
       expect(result[1].params[4]).to.equal(String(Math.round(model.round * 8 / 100)));
     });

@@ -105,13 +105,10 @@ export function textTranscoord(model) {
 }
 
 
-function calcTextPosition(model) {
+function calcTextPosition(component) {
   var {
     textAlign = 'center',
     textBaseline = 'middle',
-    left,
-    width,
-    height,
     charHeight,
     textWidth,
     rotation,
@@ -121,7 +118,14 @@ function calcTextPosition(model) {
     // paddingRight = 0,
     // paddingTop = 0,
     // paddingBottom = 0
-  } = model;
+  } = component.model;
+
+  var {
+    top,
+    left,
+    width,
+    height
+  } = component.bounds;
 
   textWidth = textWidth || width;
 
