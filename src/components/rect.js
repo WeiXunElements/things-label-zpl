@@ -2,19 +2,22 @@ var T = require('./text')
 var shapeTranscoord = require('./transcoord').shapeTranscoord
 var rotateCase = require('./transcoord').rotateCase
 
-scene.Rect.prototype.toZpl = function(group) {
+scene.Rect.prototype.toZpl = function() {
   var {
-    width = '',
-    height = '',
-    lineWidth = '',
-    fillStyle = '',
+    lineWidth,
+    fillStyle,
     strokeStyle,
-    left,
-    top,
     rotation,
     round = 0,  // 0 ~ 100
     text
   } = this.model
+
+  var {
+    width,
+    height,
+    left,
+    top
+  } = this.bounds
 
   var rotate = rotateCase(rotation);
 
@@ -55,12 +58,12 @@ scene.Rect.prototype.toZpl = function(group) {
     strokeStyle = fillStyle;
   }
 
-  left += group ? group.left || 0 : 0;
-  top += group ? group.top || 0 : 0;
+  // left += group ? group.left || 0 : 0;
+  // top += group ? group.top || 0 : 0;
 
   var commands = [
-    ['^FO'+left, top],
-    ['^GB'+width, height, lineWidth, strokeStyle, Math.round(round*8/100)],
+    ['^FO' + left, top],
+    ['^GB' + width||'', height||'', lineWidth||'', strokeStyle||'', Math.round(round * 8 / 100)],
     ['^FS']
   ];
 
@@ -76,3 +79,5 @@ scene.Rect.prototype.toZpl = function(group) {
 
   return zpl;
 }
+
+exports.Rect = scene.Rect;
