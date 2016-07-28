@@ -1,3 +1,12 @@
+global.Canvas = require('canvas')
+global.Image = Canvas.Image
+global.screen = {
+  width: 1280,
+  height: 800
+}
+
+require('things-scene/things-scene-min')
+
 export function parseZpl(zpl) {
   var lines = zpl.split('\n').filter(line => {
     return line.length > 0;

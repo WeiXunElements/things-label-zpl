@@ -1,14 +1,6 @@
 import { expect } from 'chai'
 import { parseZpl } from '../util'
 
-global.Canvas = require('canvas')
-global.Image = Canvas.Image
-global.screen = {
-  width: 1280,
-  height: 800
-}
-
-require('things-scene/things-scene-min')
 var { Ellipse } = require('../../src/components/ellipse')
 
 describe('Ellipse', function () {
