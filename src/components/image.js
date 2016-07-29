@@ -71,7 +71,7 @@ function getImageGrf(width, height, data) {
     let bytes = 0;
 
     for (let x = 0; x < width; x++) {
-      nibble += data[4 * (width * y + x) + 1] == 0 ? '0' : '1';
+      nibble += data[4 * (width * y + x) + 1] == 0 ? '1' : '0';
 
       if (nibble.length > 7) {
         grfData += binToHex(nibble.substring(0, 4)) + binToHex(nibble.substring(4, 8));

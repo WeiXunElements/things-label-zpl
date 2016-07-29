@@ -17,13 +17,12 @@ describe('Image', function () {
         type: 'image-view',
         left : 150,
         top : 50,
-        width : 100,
+        width : 600,
         height : 200,
         lineWidth : 10,
         fillStyle : '',
         strokeStyle : '',
-        rotation : '',
-        src : '../images/sample.png'
+        rotation : ''
       };
 
       scene_model = {
@@ -40,9 +39,8 @@ describe('Image', function () {
     // ['^PQ'+1],
 
     it('~DG 커맨드로 이미지를 등록해야한다.', function (done) {
-      console.log('dir', __dirname + '/../images/sample.png');
 
-      fs.readFile(__dirname + '/../images/sample.png', function(err, buffer){
+      fs.readFile(__dirname + '/../images/logo.png', function(err, buffer){
         if (err) {
           console.error(err);
 

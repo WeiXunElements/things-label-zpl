@@ -11,6 +11,8 @@ function toGrays(width, height, data) {
     for (let x = 0; x < width; x++) {
       let idx = 4 * (width * y + x);
       let luminance = data[idx + R] * 0.21 + data[idx + G] * 0.71 + data[idx + B] * 0.07;
+      if(data[idx + A] == 0)
+        luminance = 255; // Alpha값이 0이면, RGB를 흰색으로 처리한다. 
 
       grays[idx + R] = luminance;
       grays[idx + G] = luminance;

@@ -18,7 +18,7 @@ describe('Rect', function () {
         width : 100,
         height : 200,
         lineWidth : 10,
-        fillStyle : '',
+        fillStyle : '#fff',
         strokeStyle : '',
         rotation : '',
         text : ''
@@ -79,6 +79,29 @@ describe('Rect', function () {
       expect(result[1].params[4]).to.equal('4');
     });
 
+    it('lineWidth는 3번째 파라미터로 변환되어야 한다.', function () {
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+
+      expect(result[1].params[2]).to.equal('10');
+    });
+
+    it('strokeStyle이 흰색이면 W 아니면 B 로 변환되어야 한다.', function () {
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+
+      expect(result[1].params[3]).to.include('W');
+    });
   });
 
   describe('회전된 경우', function () {
