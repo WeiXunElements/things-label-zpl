@@ -13,10 +13,10 @@ describe('Ellipse', function () {
       model = {
         id: 'target',
         type: 'ellipse',
-        cx : 100,
-        cy : 150,
-        rx : 50,
-        ry : 50,
+        cx : 50,
+        cy : 100,
+        rx : 150,
+        ry : 200,
         lineWidth : 10,
         fillStyle : '',
         strokeStyle : '',
@@ -32,8 +32,9 @@ describe('Ellipse', function () {
       }
     });
 
-    it('GC 커맨드를 생성해야 한다.', function () {
-
+    it('rx와 ry가 같으면 GC 커맨드를 생성해야 한다.', function () {
+      model.rx = 100;
+      model.ry = 100;
       var test_scene = scene.create({
         target: {style:{}},
         model: scene_model
@@ -50,6 +51,58 @@ describe('Ellipse', function () {
       expect(result[2].command).to.equal('FS');
     });
 
+    it('rx와 ry가 다르면 GE 커맨드를 생성해야 한다.', function () {
+
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+
+      expect(result[1].command).to.equal('GE');
+      expect(result[1].params[0]).to.equal(String(model.rx * 2));
+      expect(result[1].params[1]).to.equal(String(model.ry * 2));
+    });
+
+    it('fillStyle이 검은색이 아닌 경우 lineWidth는 모델의 lineWidth값을 반환한다.', function () {
+      model.fillStyle = '#ffffff';
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+      expect(result[1].params[2]).to.equal(String(model.lineWidth));
+    });
+
+    it('fillStyle이 검은색일 경우에는 lineWidth의 값은 rx와 ry중 큰 값으로 변환한다.', function () {
+      model.fillStyle = '#000000';
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+      expect(result[1].params[2]).to.equal(String(Math.max(model.rx, model.ry)));
+    });
+
+    it('strokeStyle은 fillStyle이 없는 때, 흰색이면 W, 아니면 B 로 변환되어야 한다.', function () {
+      model.fillStyle = '#000000';
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+
+      // TODO
+
+    });
   });
 
   describe('회전된 경우', function () {

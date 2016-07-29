@@ -8,7 +8,7 @@ scene.Ellipse.prototype.toZpl = function() {
 		ry = '',
 		cx = '',
 		cy = '',
-		lineWidth = '',
+		lineWidth = 1,
 		fillStyle,
 		strokeStyle,
 		rotation,
@@ -54,9 +54,8 @@ scene.Ellipse.prototype.toZpl = function() {
 			fillStyle = 'W';
 		} else {
 			fillStyle = 'B'
+			lineWidth = Math.max(rx, ry);
 		}
-
-		lineWidth = Math.max(rx, ry);
 		strokeStyle = fillStyle;
 	}
 

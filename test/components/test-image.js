@@ -65,7 +65,7 @@ describe('Image', function () {
           expect(result[2].command).to.equal('XG');
           expect(result[3].command).to.equal('PQ');
 
-          console.log(zpl);
+          // console.log(zpl);
 
           done();
         }, function(error) {

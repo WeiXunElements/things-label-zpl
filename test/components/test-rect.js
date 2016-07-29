@@ -18,7 +18,7 @@ describe('Rect', function () {
         width : 100,
         height : 200,
         lineWidth : 10,
-        fillStyle : '#fff',
+        fillStyle : 'B',
         strokeStyle : '',
         rotation : '',
         text : ''
@@ -79,7 +79,8 @@ describe('Rect', function () {
       expect(result[1].params[4]).to.equal('4');
     });
 
-    it('lineWidth는 3번째 파라미터로 변환되어야 한다.', function () {
+    it('lineWidth는 fillStyle이 검은색이 아닐 때만, 3번째 파라미터로 변환되어야 한다.', function () {
+      model.fillStyle = 'white'
       var test_scene = scene.create({
         target: {style:{}},
         model: scene_model
@@ -88,49 +89,107 @@ describe('Rect', function () {
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component.toZpl())
 
-      expect(result[1].params[2]).to.equal('10');
+      expect(result[1].params[2]).to.equal(String(model.lineWidth));
     });
 
-    it('strokeStyle이 흰색이면 W 아니면 B 로 변환되어야 한다.', function () {
+    it('fillStyle이 없을 때, strokeStyle이 흰색이면 W, 아니면 B 로 변환되어야 한다.', function () {
+      model.fillStyle = '';
+      model.strokeStyle = '#fff';
       var test_scene = scene.create({
         target: {style:{}},
         model: scene_model
       });
 
-      var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var component = test_scene.findFirst('#target');
+      var result = parseZpl(component.toZpl());
 
-      expect(result[1].params[3]).to.include('W');
+      expect(result[1].params[3]).to.equal('W');
     });
   });
 
   describe('회전된 경우', function () {
 
-    var foo, bar;
+    var model, scene_model;
 
     beforeEach(function () {
-      foo = {a: 32, b: {aa: 33, bb: 94}};
-      bar = {c: 44};
+      model = {
+        id: 'target',
+        type: 'rect',
+        left : 150,
+        top : 50,
+        width : 100,
+        height : 200,
+        lineWidth : 10,
+        fillStyle : 'B',
+        strokeStyle : '',
+        rotation : '',
+        text : ''
+      };
+
+      scene_model = {
+        unit: 'mm',
+        width: 800,
+        height: 400,
+        components: [model]
+      }
     });
 
-    it('생성된 커맨드의 X값이 어떠어떠해야한다.', function () {
-      expect(foo.a).to.equal(32);
+    it('회전이 90이나 270도일 경우 width와 height의 값이 서로 바뀌어야 한다.', function () {
+      model.rotation = Math.PI * 0.5;   // 90도
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+
+      expect(result[1].params[0]).to.equal(String(model.height));
+      expect(result[1].params[1]).to.equal(String(model.width));
+    });
+
+    it('lineWidth는 fillStyle이 검은색일 때, 90과 270도 일때는 width가 되어야 한다.', function () {
+      model.fillStyle = 'black'
+      model.rotation = Math.PI * 0.5;  // 90도
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+
+      expect(result[1].params[0]).to.equal(result[1].params[2]);
+    });
+
+    it('lineWidth는 fillStyle이 검은색일 때, 0과 180도 일때는 height가 되어야 한다.', function () {
+      model.fillStyle = 'black'
+      model.rotation = Math.PI * 1;  // 180도
+      var test_scene = scene.create({
+        target: {style:{}},
+        model: scene_model
+      });
+
+      var component = test_scene.findFirst('#target')
+      var result = parseZpl(component.toZpl())
+
+      expect(result[1].params[1]).to.equal(result[1].params[2]);
     });
 
   });
 
-  describe('그룹에 속한 경우', function () {
-
-    var foo, bar;
-
-    beforeEach(function () {
-      foo = {a: 32, b: {aa: 33, bb: 94}};
-      bar = {c: 44};
-    });
-
-    it('생성된 커맨드의 X값이 어떠어떠해야한다.222', function () {
-      expect(foo.a).to.equal(32);
-    });
-
-  });
+  // describe('그룹에 속한 경우', function () {
+  //
+  //   var foo, bar;
+  //
+  //   beforeEach(function () {
+  //     foo = {a: 32, b: {aa: 33, bb: 94}};
+  //     bar = {c: 44};
+  //   });
+  //
+  //   it('생성된 커맨드의 X값이 어떠어떠해야한다.222', function () {
+  //     expect(foo.a).to.equal(32);
+  //   });
+  //
+  // });
 });

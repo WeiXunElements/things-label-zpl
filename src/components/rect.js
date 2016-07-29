@@ -52,9 +52,11 @@ scene.Rect.prototype.toZpl = function() {
       fillStyle = 'W';
     } else {
       fillStyle = 'B'
+      if(rotate == 'R' || rotate =='B') // rotate가 90 또는 270도. 즉 옆으로 섰을때에는 테두리의 굵기가 width가 되야 모양이 유지된다.
+        lineWidth = width;
+      else
+        lineWidth = height;
     }
-
-    lineWidth = height;
     strokeStyle = fillStyle;
   }
 
