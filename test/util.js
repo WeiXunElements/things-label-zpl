@@ -1,11 +1,15 @@
-global.Canvas = require('canvas')
-global.Image = Canvas.Image
+global.Canvas = require('canvas');
+global.Image = Canvas.Image;
 global.screen = {
   width: 1280,
   height: 800
-}
+};
 
-require('things-scene/things-scene-min')
+require('things-scene/things-scene-min');
+global.bwip = require('bwip/bwip-min');
+require('things-scene-barcode/things-scene-barcode-min');
+
+scene.Barcode = scene.Component.register('barcode');
 
 export function parseZpl(zpl) {
   var lines = zpl.split('\n').filter(line => {
@@ -14,14 +18,14 @@ export function parseZpl(zpl) {
 
   return lines.map(line => {
     if(line[0] !== '^' && line[0] !== '~')
-      throw new Error('빵글이나 물결이 없다.')
+      throw new Error('빵글이나 물결이 없다.');
 
-    var command = line.substr(1, 2)
-    var params = line.substr(3).split(',')
+    var command = line.substr(1, 2);
+    var params = line.substr(3).split(',');
 
     return {
       command,
       params
-    }
+    };
   });
 }

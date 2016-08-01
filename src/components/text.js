@@ -4,25 +4,20 @@ var textTranscoord = require('./transcoord').textTranscoord
 var transcoordS2P = require('./transcoord').transcoordS2P
 var rotateCase = require('./transcoord').rotateCase
 
+const MAX_NUMBER_OF_LINES = 10;
+
 scene.Component.prototype.toZplForText = function() {
   // text 에서는 left, top만 위치를 결정함, width, height는 의미가 없음.
   var {
     text = '',
-    left = 0,
-    top = 0,
-    width = '',
-    height = '',
-    textType = '',
+    textType,
     charWidth,
     charHeight,
-    lineCount,
-    rotation = 0,
-    underLine,
+    underline,
     strike,
 
-    maxLines = 100,
     hangingIndent,
-    lineMargin
+    lineSpace
   } = this.model
 
   if (!width) {
@@ -50,27 +45,27 @@ scene.Component.prototype.toZplForText = function() {
   var fontNo = config.fontNo || 0;
   if (textType === 'W' || textType === 'w') {
     switch(textAlign) {
-      case 'left':
-        textAlign = 'L';
-        break;
       case 'right':
         textAlign = 'R';
-        break;
-      case 'center':
-      default:
-        textAlign = 'C';
         break;
       case 'justified':
         textAlign = 'J';
         break;
+      case 'center':
+        textAlign = 'C';
+        break;
+      case 'left':
+      default:
+        textAlign = 'L';
+        break;
     }
 
     var commands = [
-      ['^FO'+left, top],
+      ['^FO' + left, top],
       // ['^A@'+rotate, charHeight, charWidth * 0.75],
-      ['^A'+fontNo+rotate, charHeight, charWidth], // FIXME
-      ['^FB'+width, maxLines, lineMargin, textAlign, hangingIndent],
-      ['^FD'+text],
+      ['^A' + fontNo + rotate, charHeight, charWidth], // FIXME
+      ['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, textAlign, hangingIndent],
+      ['^FD' + text],
       ['^FS']
     ];
   } else {
@@ -93,9 +88,13 @@ scene.Component.prototype.toZplForText = function() {
 }
 
 scene.Text.prototype.toZpl = function() {
-  return toZplForText()
+  return this.toZplForText()
 }
 
+/*
+ * 텍스트와 관련된 라인을 그린다. (underline, strike)
+ * 필수 기능은 아니라고 생각한다. (삭제 고려)
+ */
 function lineZpl(rotate) {
   var {
     left,
@@ -105,7 +104,7 @@ function lineZpl(rotate) {
     charHeight,
     lineCount = 1,
 
-    underLine,
+    underline,
     strike,
   } = this.model;
 
@@ -115,7 +114,7 @@ function lineZpl(rotate) {
 
   var points = [];
   var zpl = '';
-  if (underLine) {
+  if (underline) {
     let y = top;
     for (let i = 0; i < lineCount; i++) {
       y += charHeight;
@@ -146,12 +145,17 @@ function lineZpl(rotate) {
   return zpl;
 }
 
+/*
+ * 텍스트와 관련된 라인을 그릴 때, 텍스트의 방향에 따라서 라인의 시작/종료 위치를 결정한다.
+ */
 function rotateLine(rotate, x, textWidth, y, ty, lineIndex) {
+  /*
+   * N = normal
+   * R = rotated 90 degrees (clockwise)
+   * I = inverted 180 degrees
+   * B = read from bottom up, 270 degrees
+  */
   switch(rotate) {
-    case 'N':
-    default:
-      return {x1: x, x2: x+textWidth, y1: y+ty, y2: y+ty};
-      break;
     case 'R':
       return {x1: x, x2: x, y1: y, y2: y+textWidth};
       break;
@@ -160,6 +164,10 @@ function rotateLine(rotate, x, textWidth, y, ty, lineIndex) {
       break;
     case 'B':
       return {x1: x+ty, x2: x+ty, y1: y, y2: y+textWidth};
+      break;
+    case 'N':
+    default:
+      return {x1: x, x2: x+textWidth, y1: y+ty, y2: y+ty};
       break;
   }
 }
