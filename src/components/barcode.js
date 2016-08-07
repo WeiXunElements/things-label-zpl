@@ -1,41 +1,27 @@
 var config = require('../../config').config
-var shapeTranscoord = require('./transcoord').shapeTranscoord
-var rotateCase = require('./transcoord').rotateCase
 
 scene.Barcode.prototype.toZpl = function() {
 	var {
-		left = '',
-		top = '',
-		width = '',
-		height = '',
 		symbol = '',
-		rotation = '',
 		scale_w = 1,
 		showText = 'Y',
 		textAbove = '',
 		text = ''
 	} = this.model;
 
-	left += group ? group.left || 0 : 0;
-	top += group ? group.top || 0 : 0;
+  var {
+    left,
+    top,
+    width,
+    height
+  } = this.labelingBounds;
 
-	var rotate = rotateCase(rotation);
+	var orientation = this.orientation;
 
-	switch(rotate) {
-		case 'N':
-		case 'I':
-		default:
-			break;
-		case 'R':
-		case 'B':
-			let startPoint = shapeTranscoord(this.model);
-			left = startPoint.x;
-			top = startPoint.y;
-			break;
-	}
+	var commands = [];
 
-	var lines = [];
-	lines.push(['^BY'+scale_w, 3])
+	commands.push(['^BY' + scale_w, 3])
+  commands.push('^FO' + left + ',' + top)
 
 	if (showText && symbol != 'qrcode') {
 		height -= (scale_w * 6 + 8);	// barcode 높이는 문자 뺀 다음의 높이임.
@@ -43,47 +29,92 @@ scene.Barcode.prototype.toZpl = function() {
 
 	var dpi = config.dpi;	// FIXME
 
-	var symbolMap = new Map([
-		['code11', 					['^B1'+rotate, , height, showText, textAbove]],
-		['interleaved2of5', ['^B2'+rotate, height, showText, textAbove, ]],
-		['code39', 					['^B3'+rotate, , height, showText, textAbove]],
-		['code49', 					['^B4'+rotate, height, showText,]],
-		['planet', 					['^B5'+rotate, height, showText, textAbove]],
-		['pdf417', 					['^B7'+rotate, height, , , , ]],
-		['ean8', 						['^B8'+rotate, height, showText, textAbove]],
-		['upce', 						['^B9'+rotate, height, showText, textAbove, ]],
-		['code93', 					['^BA'+rotate, height, showText, textAbove, ]],
-		['codablock', 			['^BB'+rotate, height, , , , ]],
-		['code128', 				['^BC'+rotate, height, showText, textAbove, , ]],
-		['maxicode', 				['^BD'+rotate, , height, showText, textAbove]],
-		['ean13', 					['^BE'+rotate, height, showText, textAbove]],
-		['micropdf417', 		['^BF'+'2', , ]],
-		['industrial2of5',	['^BI'+rotate, height, showText, textAbove]],
-		['standard2of5', 		['^BJ'+rotate, height, showText, textAbove]],
-		['ansicodabar', 		['^BK'+rotate, , height, showText, textAbove, , ]],
-		['logmars', 				['^BL'+rotate, height, textAbove]],
-		['msi', 						['^BM'+rotate, , height, showText, textAbove, ]],
-		['plessey', 				['^BP'+rotate, , height, showText, textAbove]],
-		['qrcode', 					['^BQ'+rotate, 2, Math.round(height / 19.54)]],
-		['upca', 						['^BU'+rotate, height, showText, textAbove, ]],
-		['datamatrix', 			['^BX'+'']],	// TODO
-		['postal', 					['^BZ'+rotate, height, showText, textAbove]]
-	]);
+  switch(symbol) {
+  case 'code11'          :
+    commands.push(['^B1' + orientation, , height, showText, textAbove]);
+    break;
+  case 'interleaved2of5' :
+    commands.push(['^B2' + orientation, height, showText, textAbove, ]);
+    break;
+  case 'code39'          :
+    commands.push(['^B3' + orientation, , height, showText, textAbove]);
+    break;
+  case 'code49'          :
+    commands.push(['^B4' + orientation, height, showText,]);
+    break;
+  case 'planet'          :
+    commands.push(['^B5' + orientation, height, showText, textAbove]);
+    break;
+  case 'pdf417'          :
+    commands.push(['^B7' + orientation, height, , , , ]);
+    break;
+  case 'ean8'            :
+    commands.push(['^B8' + orientation, height, showText, textAbove]);
+    break;
+  case 'upce'            :
+    commands.push(['^B9' + orientation, height, showText, textAbove, ]);
+    break;
+  case 'code93'          :
+    commands.push(['^BA' + orientation, height, showText, textAbove, ]);
+    break;
+  case 'codablock'       :
+    commands.push(['^BB' + orientation, height, , , , ]);
+    break;
+  case 'code128'         :
+    commands.push(['^BC' + orientation, height, showText, textAbove, , ]);
+    break;
+  case 'maxicode'        :
+    commands.push(['^BD' + orientation, , height, showText, textAbove]);
+    break;
+  case 'ean13'           :
+    commands.push(['^BE' + orientation, height, showText, textAbove]);
+    break;
+  case 'micropdf417'     :
+    commands.push(['^BF' + '2', , ]);
+    break;
+  case 'industrial2of5'  :
+    commands.push(['^BI' + orientation, height, showText, textAbove]);
+    break;
+  case 'standard2of5'    :
+    commands.push(['^BJ' + orientation, height, showText, textAbove]);
+    break;
+  case 'ansicodabar'     :
+    commands.push(['^BK' + orientation, , height, showText, textAbove, , ]);
+    break;
+  case 'logmars'         :
+    commands.push(['^BL' + orientation, height, textAbove]);
+    break;
+  case 'msi'             :
+    commands.push(['^BM' + orientation, , height, showText, textAbove, ]);
+    break;
+  case 'plessey'         :
+    commands.push(['^BP' + orientation, , height, showText, textAbove]);
+    break;
+  case 'qrcode'          :
+    commands.push(['^BQ' + orientation, 2, Math.round(height / 19.54)]);
+    break;
+  case 'upca'            :
+    commands.push(['^BU' + orientation, height, showText, textAbove, ]);
+    break;
+  case 'datamatrix'      :
+    commands.push(['^BX' + '']); // TODO
+    break;
+  case 'postal'          :
+    commands.push(['^BZ' + orientation, height, showText, textAbove]);
+    break;
+  }
 
-
-	var params = symbolMap.get(symbol);
-
-	lines.push('^FO' + left + ',' + top)
-	lines.push(params.join(','))
 	if (symbol === 'qrcode') {
-		lines.push('^FDQ,' + 'A' + text);
+		commands.push(['^FDQ', 'A' + text]);
 	} else {
-		lines.push('^FD' + text);
+		commands.push(['^FD' + text]);
 	}
 
-	lines.push('^FS')
+	commands.push(['^FS'])
 
-	var zpl = lines.join('\n') + '\n'
+  var zpl = commands.map(command => {
+    return command.join(',')
+  }).join('\n') + '\n\n';
 
 	return zpl;
 }

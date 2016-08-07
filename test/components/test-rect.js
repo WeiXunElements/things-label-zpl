@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { parseZpl } from '../util'
 
-var { Rect } = require('../../src/components/rect')
+require('../../src/components/rect');
 
 describe('Rect', function () {
 
@@ -79,7 +79,7 @@ describe('Rect', function () {
       expect(result[1].params[4]).to.equal('4');
     });
 
-    it('lineWidth는 fillStyle이 검은색이 아닐 때만, 3번째 파라미터로 변환되어야 한다.', function () {
+    it('border-thickness는 fillStyle이 검은색이 아닐 때만, 3번째 파라미터로 변환되어야 한다.', function () {
       model.fillStyle = 'white'
       var test_scene = scene.create({
         target: {style:{}},
@@ -148,7 +148,7 @@ describe('Rect', function () {
       expect(result[1].params[1]).to.equal(String(model.width));
     });
 
-    it('lineWidth는 fillStyle이 검은색일 때, 90과 270도 일때는 width가 되어야 한다.', function () {
+    it('border-thickness는 fillStyle이 검은색일 때, 90과 270도 일때는 width와 height중 작은 값의 절반이 되어야 한다.', function () {
       model.fillStyle = 'black'
       model.rotation = Math.PI * 0.5;  // 90도
       var test_scene = scene.create({
@@ -159,10 +159,10 @@ describe('Rect', function () {
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component.toZpl())
 
-      expect(result[1].params[0]).to.equal(result[1].params[2]);
+      expect(result[1].params[2]).to.equal(String(Math.min(model.width, model.height)/2));
     });
 
-    it('lineWidth는 fillStyle이 검은색일 때, 0과 180도 일때는 height가 되어야 한다.', function () {
+    it('border-thickness는 fillStyle이 검은색일 때, 0과 180도 일때는 width와 height중 작은 값의 절반이 되어야 한다.', function () {
       model.fillStyle = 'black'
       model.rotation = Math.PI * 1;  // 180도
       var test_scene = scene.create({
@@ -173,7 +173,7 @@ describe('Rect', function () {
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component.toZpl())
 
-      expect(result[1].params[1]).to.equal(result[1].params[2]);
+      expect(result[1].params[2]).to.equal(String(Math.min(model.width, model.height)/2));
     });
 
   });

@@ -1,9 +1,7 @@
 import { expect } from 'chai'
 import { parseZpl } from '../util'
 
-var { Rect } = require('../../src/components/rect')
-var { Ellipse } = require('../../src/components/ellipse')
-require('../../src/components/text')
+require('../../src/components/text');
 
 describe('Text', function () {
 
@@ -17,13 +15,10 @@ describe('Text', function () {
         type: 'text',
         left : 150,
         top : 50,
-        width : 100,
+        width : 200,
         height : 200,
-        lineWidth : 10,
-        fillStyle : '',
-        strokeStyle : '',
-        rotation : '',
-        text : 'ABCDEFG'
+        fontSize: 20,
+        text : 'ABC DEF G BBB BBB BB CCC CCC CC'
       };
 
       scene_model = {
@@ -34,7 +29,9 @@ describe('Text', function () {
       }
     });
 
-    it('GB 커맨드를 생성해야 한다.', function () {
+    it('textWrap인 경우 A, FB 커맨드를 생성해야 한다.', function () {
+      model.textWrap = true;
+
       var test_scene = scene.create({
         target: {style:{}},
         model: scene_model
@@ -42,28 +39,15 @@ describe('Text', function () {
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component.toZpl())
-      var bounds = component.bounds
 
       expect(result[0].command).to.equal('FO');
-      expect(result[0].params[0]).to.equal(String(bounds.left));
-      expect(result[0].params[1]).to.equal(String(bounds.top));
-      expect(result[1].command).to.equal('GB');
-      expect(result[2].command).to.equal('FS');
+      expect(result[0].params[0]).to.equal(String(model.left));
+      expect(result[0].params[1]).to.equal(String(model.top));
+      expect(result[1].command).to.equal('A');
+      expect(result[2].command).to.equal('FB');
+      expect(result[3].command).to.equal('FD');
+      expect(result[4].command).to.equal('FS');
     });
-
-    it('round 값은 0~8로 변환 되어야 한다.', function () {
-
-      var test_scene = scene.create({
-        target: {style:{}},
-        model: scene_model
-      });
-
-      var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
-
-      expect(result[1].params[4]).to.equal(String(Math.round(model.round * 8 / 100)));
-    });
-
   });
 
   describe('회전된 경우', function () {

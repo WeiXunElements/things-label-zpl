@@ -1,84 +1,41 @@
-var T = require('./text')
-var shapeTranscoord = require('./transcoord').shapeTranscoord
-var rotateCase = require('./transcoord').rotateCase
+require('./text');
 
-scene.Rect.prototype.toZpl = function() {
+scene.Component.prototype.toZplForRect = function(bounds, lineColor, borderThickness, round) {
   var {
-    lineWidth,
-    fillStyle,
-    strokeStyle,
-    rotation,
-    round = 0,  // 0 ~ 100
-    text
-  } = this.model
-
-  var {
-    width,
-    height,
+    top,
     left,
-    top
-  } = this.bounds
-
-  var rotate = rotateCase(rotation);
-
-  switch(rotate) {
-    case 'N':
-    case 'I':
-    default:
-      break;
-    case 'R':
-    case 'B':
-      let tmp = width;
-      width = height;
-      height = tmp;
-
-      let startPoint = shapeTranscoord(this.model);
-      left = startPoint.x;
-      top = startPoint.y;
-      break;
-  }
-
-
-  if (strokeStyle === 'white' || strokeStyle === '#fff'
-    || (strokeStyle === '#ffffff')) {
-    strokeStyle = 'W';
-  } else {
-    strokeStyle = 'B'
-  }
-
-  if (fillStyle) {
-    if (fillStyle === 'white' || fillStyle === '#fff'
-      || (fillStyle === '#ffffff')) {
-      fillStyle = 'W';
-    } else {
-      fillStyle = 'B'
-      if(rotate == 'R' || rotate =='B') // rotate가 90 또는 270도. 즉 옆으로 섰을때에는 테두리의 굵기가 width가 되야 모양이 유지된다.
-        lineWidth = width;
-      else
-        lineWidth = height;
-    }
-    strokeStyle = fillStyle;
-  }
-
-  // left += group ? group.left || 0 : 0;
-  // top += group ? group.top || 0 : 0;
+    width,
+    height
+  } = bounds;
 
   var commands = [
     ['^FO' + left, top],
-    ['^GB' + width||'', height||'', lineWidth||'', strokeStyle||'', Math.round(round * 8 / 100)],
+    ['^GB' + width, height, borderThickness, lineColor, Math.round(round * 8 / 100)],
     ['^FS']
   ];
 
-  var zpl = commands.map(command => {
+  return commands.map(command => {
     return command.join(',')
   }).join('\n') + '\n\n';
+};
 
-  // make text command
-  if (text) {
-    // var texts = new T.Text(this.model);
+scene.Rect.prototype.toZpl = function() {
+  var {
+    round = 0
+  } = this.model
+
+  var zpl = this.toZplForRect(
+    this.labelingBounds,
+    this.lineColor,
+    this.borderThickness,
+    round
+  );
+
+  // build text command
+  if(this.text)
     zpl += this.toZplForText();
-  }
 
+  console.log(zpl);
   return zpl;
 }
 

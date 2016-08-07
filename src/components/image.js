@@ -123,6 +123,8 @@ scene.ImageView.prototype.toZpl = function() {
         return command.join(',')
       }).join('\n') + '\n\n';
 
+      console.log(result);
+
       resolve(result);
 
     }, function(error) {

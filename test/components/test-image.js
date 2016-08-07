@@ -3,7 +3,7 @@ import { parseZpl } from '../util'
 
 const fs = require('fs');
 
-var { Image } = require('../../src/components/image')
+require('../../src/components/image');
 
 describe('Image', function () {
 
@@ -38,7 +38,7 @@ describe('Image', function () {
     // ['^XG'+'R:'+guid, 1, 1],
     // ['^PQ'+1],
 
-    it('~DG 커맨드로 이미지를 등록해야한다.', function (done) {
+    it('~DG 커맨드로 이미지를 등록하고, ^XG 커맨드로 이미지를 그려야 한다.', function (done) {
 
       fs.readFile(__dirname + '/../images/logo.png', function(err, buffer){
         if (err) {
@@ -76,23 +76,6 @@ describe('Image', function () {
         });
       });
 
-    });
-
-    it('^XG 커맨드로 이미지를 그려야 한다.', function () {
-      var test_scene = scene.create({
-        target: {style:{}},
-        model: scene_model
-      });
-
-      var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
-      var bounds = component.bounds
-
-      expect(result[0].command).to.equal('FO');
-      expect(result[0].params[0]).to.equal(String(bounds.left));
-      expect(result[0].params[1]).to.equal(String(bounds.top));
-      expect(result[1].command).to.equal('GB');
-      expect(result[2].command).to.equal('FS');
     });
 
   });

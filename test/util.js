@@ -20,8 +20,15 @@ export function parseZpl(zpl) {
     if(line[0] !== '^' && line[0] !== '~')
       throw new Error('빵글이나 물결이 없다.');
 
+    var params;
     var command = line.substr(1, 2);
-    var params = line.substr(3).split(',');
+
+    if(command[0] == 'A' && command != 'A@') {
+      command = 'A';
+      params = line.substr(2).split(',');
+    } else {
+      params = line.substr(3).split(',');
+    }
 
     return {
       command,

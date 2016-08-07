@@ -1,5 +1,5 @@
 var config = {
-	fontNo: 6,
+	fontNo: 'A',
 	dpi: 203
 	// dpi: 300
 }

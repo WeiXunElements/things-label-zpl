@@ -1,114 +1,69 @@
-var Rect = require('./rect').Rect
+require('./rect');
+require('./text');
 
-function line(properties) {
-  this.model = properties;
+scene.Component.prototype.toZplForLine = function(bounds, lineColor, borderThickness, orientation) {
+  var {
+    left,
+    top,
+    width,
+    height
+  } = bounds;
 
-  this.toZpl = function(group) {
-		var {
-			x1 = '',
-			x2 = '',
-			y1 = '',
-			y2 = '',
-			fillStyle
- 		} = this.model;
+  var commands = [
+    ['^FO'+left, top],
+    ['^GD' + width, height, borderThickness, lineColor, orientation],
+    ['^FS']
+  ];
 
-		if (fillStyle === 'white' || fillStyle === '#fff'
-			|| (fillStyle === '#ffffff')) {
-			fillStyle = 'W';
-		} else {
-			fillStyle = 'B'
-		}
+  return commands.map(command => {
+    return command.join(',')
+  }).join('\n') + '\n\n';
+};
 
-		var zpl = '';		
-		if (Math.round(x1*100) === Math.round(x2*100) || Math.round(y1*100) === Math.round(y2*100)) {
-			zpl = gbLine.call(this, group);
-			return zpl;
-		} else {
-			var commands = gdLine.call(this, group);
-		}
+scene.Line.prototype.toZpl = function() {
+  var bounds = this.labelingBounds;
+  var zpl;
 
-	  commands.forEach(c => {
-	  	zpl += (c.join(',') + '\n')
-	  });
+  if(bounds.width == 0 || bounds.height == 0) {
+    zpl = this.toZplForRect(
+      bounds,
+      this.lineColor,
+      this.borderThickness,
+      0
+    );
+  } else {
 
-		return zpl;
+    var {
+      x1,
+      x2,
+      y1,
+      y2
+    } = this.model;
+
+    var p1 = this.transcoordS2T(x1, y1);
+    var p2 = this.transcoordS2T(x2, y2);
+
+    var orientation;
+
+    if(p1.x <= p2.x && p1.y <= p2.y)
+      orientation = 'L';
+    else if(p1.x >= p2.x && p1.y >= p2.y)
+      orientation = 'L';
+    else if(p1.x >= p2.x && p1.y <= p2.y)
+      orientation = 'R';
+    else if(p1.x <= p2.x && p1.y >= p2.y)
+      orientation = 'R';
+
+    zpl = this.toZplForLine(bounds, this.lineColor, this.borderThickness, orientation);
   }
+
+  // build text command
+  if(this.text)
+    zpl += this.toZplForText();
+
+  console.log(zpl);
+  return zpl;
 }
 
-function gbLine(group) {	// graphic box
-	var {
-		x1 = '',
-		x2 = '',
-		y1 = '',
-		y2 = '',
-		lineWidth,
-		strokeStyle,
-		rotation = 0
-	} = this.model;
+exports.Line = scene.Line;
 
-	if (strokeStyle === 'white' || strokeStyle === '#fff'
-		|| (strokeStyle === '#ffffff')) {
-		strokeStyle = 'W';
-	} else {
-		strokeStyle = 'B'
-	}
-
-	var left = Math.min(x1, x2);
-	var top = Math.min(y1, y2);
-
-	var tx = Math.abs(x2 - x1);
-	var ty = Math.abs(y2 - y1);
-	var width = tx === 0 ? lineWidth : tx;
-	var height = ty === 0 ? lineWidth : ty;
-
-	var properties = { left, top, width, height, lineWidth, strokeStyle };
-	var rect = new Rect(properties);
-	return rect.toZpl(group);
-}
-
-function gdLine(group) {
-	var {
-		x1 = '',
-		x2 = '',
-		y1 = '',
-		y2 = '',
-		lineWidth = '',
-		strokeStyle
-	} = this.model;
-
-	if (strokeStyle === 'white' || strokeStyle === '#fff'
-		|| (strokeStyle === '#ffffff')) {
-		strokeStyle = 'W';
-	} else {
-		strokeStyle = 'B'
-	}
-
-	var left = Math.min(x1, x2);
-	var top = Math.min(y1, y2);
-	var width = Math.abs(x2 - x1);
-	var height = Math.abs(y2 - y1);
-
-	var rotate;
-	if(x1 <= x2 && y1 <= y2) {
-		rotate = 'L'
-	} else if(x1 >= x2 && y1 >= y2) {
-		rotate = 'L'
-	} else if(x1 >= x2 && y1 <= y2) {
-		rotate = 'R'
-	} else if(x1 <= x2 && y1 >= y2) {
-		rotate = 'R'
-	}
-	
-	left += group ? group.left || 0 : 0;
-	top += group ? group.top || 0 : 0;
-
-	var commands = [
-		['^FO'+left, top],
-		['^GD' + width, height, lineWidth, strokeStyle, rotate],
-		['^FS']
-	];
-
-	return commands;
-}
-
-exports.Line = line;
