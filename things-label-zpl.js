@@ -154,6 +154,7 @@ scene.Barcode.prototype.toZpl = function () {
   }).join('\n') + '\n';
 
   console.log(zpl);
+  console.log(scene.Barcode);
   return zpl;
 };
 
