@@ -2,11 +2,10 @@ var config = require('../../config').config
 
 scene.Barcode.prototype.toZpl = function() {
 	var {
-		symbol = '',
+		symbol,
 		scale_w = 1,
 		showText = 'Y',
-		textAbove = '',
-		text = ''
+		textAbove = ''
 	} = this.model;
 
   var {
@@ -16,12 +15,24 @@ scene.Barcode.prototype.toZpl = function() {
     height
   } = this.labelingBounds;
 
+  var text = this.text;
 	var orientation = this.orientation;
 
 	var commands = [];
 
-	commands.push(['^BY' + scale_w, 3])
-  commands.push('^FO' + left + ',' + top)
+  // ^BY 커맨드 : 바코드의 디폴트 설정.
+  // barRatio : wide bar to narrow bar width ratio (no effect on fixed ratio bar codes)
+  // 유효값 : 2.0 ~ 3.0
+  // 디폴트 값을 3으로 둠.
+  // 고정비율 바코드에는 적용되지 않음.
+  var barRatio = 3;
+  // barHeight : height of bars (in dots)
+  // 유효값 : 1 to 32000 Initial Value at Power-up: 10
+  // BC 커맨드의 높이 정보가 없을 때 디폴트로 적용됨.
+  var barHeight = 100;
+
+	commands.push(['^BY' + scale_w, barRatio, barHeight]);
+  commands.push(['^FO' + left, top]);
 
 	if (showText && symbol != 'qrcode') {
 		height -= (scale_w * 6 + 8);	// barcode 높이는 문자 뺀 다음의 높이임.
@@ -114,8 +125,9 @@ scene.Barcode.prototype.toZpl = function() {
 
   var zpl = commands.map(command => {
     return command.join(',')
-  }).join('\n') + '\n\n';
+  }).join('\n') + '\n';
 
+  console.log(zpl)
 	return zpl;
 }
 

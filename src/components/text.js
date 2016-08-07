@@ -31,7 +31,7 @@ scene.Component.prototype.toZplForText = function() {
       case 'right':
         justification = 'R';
         break;
-      case 'justified':
+      case 'justify':
         justification = 'J';
         break;
       case 'center':
@@ -66,11 +66,11 @@ scene.Component.prototype.toZplForText = function() {
 
   return commands.map(command => {
     return command.join(',')
-  }).join('\n') + '\n\n';
+  }).join('\n') + '\n';
 }
 
 scene.Text.prototype.toZpl = function() {
-  console.log(this.toZplForText());
+  // console.log(this.toZplForText());
 
   return this.toZplForText()
 }

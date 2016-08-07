@@ -16,7 +16,7 @@ scene.Component.prototype.toZplForRect = function(bounds, lineColor, borderThick
 
   return commands.map(command => {
     return command.join(',')
-  }).join('\n') + '\n\n';
+  }).join('\n') + '\n';
 };
 
 scene.Rect.prototype.toZpl = function() {
@@ -35,7 +35,7 @@ scene.Rect.prototype.toZpl = function() {
   if(this.text)
     zpl += this.toZplForText();
 
-  console.log(zpl);
+  // console.log(zpl);
   return zpl;
 }
 

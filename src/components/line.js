@@ -17,7 +17,7 @@ scene.Component.prototype.toZplForLine = function(bounds, lineColor, borderThick
 
   return commands.map(command => {
     return command.join(',')
-  }).join('\n') + '\n\n';
+  }).join('\n') + '\n';
 };
 
 scene.Line.prototype.toZpl = function() {
@@ -43,16 +43,7 @@ scene.Line.prototype.toZpl = function() {
     var p1 = this.transcoordS2T(x1, y1);
     var p2 = this.transcoordS2T(x2, y2);
 
-    var orientation;
-
-    if(p1.x <= p2.x && p1.y <= p2.y)
-      orientation = 'L';
-    else if(p1.x >= p2.x && p1.y >= p2.y)
-      orientation = 'L';
-    else if(p1.x >= p2.x && p1.y <= p2.y)
-      orientation = 'R';
-    else if(p1.x <= p2.x && p1.y >= p2.y)
-      orientation = 'R';
+    var orientation = (p1.x - p2.x) * (p1.y - p2.y) > 0 ? 'L' : 'R';
 
     zpl = this.toZplForLine(bounds, this.lineColor, this.borderThickness, orientation);
   }
@@ -61,7 +52,7 @@ scene.Line.prototype.toZpl = function() {
   if(this.text)
     zpl += this.toZplForText();
 
-  console.log(zpl);
+  // console.log(zpl);
   return zpl;
 }
 

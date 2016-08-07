@@ -100,10 +100,7 @@ scene.ImageView.prototype.toZpl = function() {
   var {
     top,
     left
-  } = this.bounds;
-
-  // top += group ? group.top || 0 : 0
-  // left += group ? group.left || 0 : 0;
+  } = this.labelingBounds;
 
   var self = this;
 
@@ -112,16 +109,16 @@ scene.ImageView.prototype.toZpl = function() {
 
       var guid = getGuid();
       var commands = [
-        ['~DG'+guid, grf],
-        ['^FO'+left, top],
-        ['^XG'+'R:'+guid, 1, 1],
-        ['^PQ'+1],
+        ['~DG' + guid, grf],
+        ['^FO' + left, top],
+        ['^XG' + 'R:' + guid, 1, 1],
+        ['^PQ' + 1],
         ['^FS']
       ];
 
       var result = commands.map(command => {
         return command.join(',')
-      }).join('\n') + '\n\n';
+      }).join('\n') + '\n';
 
       console.log(result);
 

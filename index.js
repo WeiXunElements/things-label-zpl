@@ -1,9 +1,7 @@
-// var zpl = require("./src/api");
-var zpl = require("./lib/api");
-
-if (typeof window !== 'undefined')
-  window.zpl = zpl
-
-if (typeof exports !== 'undefined') {
-	exports.zpl = zpl;
-}
+require('./src/components/component');
+require('./src/components/text');
+require('./src/components/barcode');
+require('./src/components/rect');
+require('./src/components/ellipse');
+require('./src/components/line');
+require('./src/components/image');

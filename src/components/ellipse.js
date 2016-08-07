@@ -19,7 +19,7 @@ scene.Component.prototype.toZplForEllipse = function(bounds, lineColor, borderTh
 
   return commands.map(command => {
     return command.join(',')
-  }).join('\n') + '\n\n';
+  }).join('\n') + '\n';
 };
 
 scene.Ellipse.prototype.toZpl = function() {
@@ -34,7 +34,7 @@ scene.Ellipse.prototype.toZpl = function() {
   if(this.text)
     zpl += this.toZplForText();
 
-  console.log(zpl);
+  // console.log(zpl);
 	return zpl;
 }
 

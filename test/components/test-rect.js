@@ -18,7 +18,7 @@ describe('Rect', function () {
         width : 100,
         height : 200,
         lineWidth : 10,
-        fillStyle : 'B',
+        fillStyle : 'black',
         strokeStyle : '',
         rotation : '',
         text : ''

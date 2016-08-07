@@ -11,9 +11,25 @@ function isBlackColor(color) {
     color === '#000000';
 }
 
+scene.Scene.prototype.toZpl = function() {
+  return [
+    '^XA',
+    '^PW' + (80 / 2.54 * 203) + '\n',
+    this.root.toZpl(),
+    '^XZ'
+  ].join('\n');
+}
+
 scene.Component.prototype.toZpl = function() {
 
   return '';
+}
+
+scene.Container.prototype.toZpl = function() {
+
+  return this.components.map(component => {
+    return component.toZpl();
+  }).join();
 }
 
 Object.defineProperty(scene.Component.prototype, "lineColor", {
@@ -112,7 +128,7 @@ Object.defineProperty(scene.Component.prototype, "labelingBounds", {
   }
 });
 
-Object.defineProperty(scene.Component.prototype, "rotationToTop", {
+Object.defineProperty(scene.Component.prototype, "absoluteRotation", {
 
   get: function() {
 
@@ -131,7 +147,7 @@ Object.defineProperty(scene.Component.prototype, "rotationToTop", {
 Object.defineProperty(scene.Component.prototype, "orientation", {
 
   get: function() {
-    var rotation = this.rotationToTop % (Math.PI * 2);
+    var rotation = this.absoluteRotation % (Math.PI * 2);
 
     if (Math.PI * -0.25 < rotation && rotation <= Math.PI * 0.25)
       return ORIENTATION.NORMAL;

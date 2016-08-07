@@ -18,7 +18,7 @@ describe('Text', function () {
         width : 200,
         height : 200,
         fontSize: 20,
-        text : 'ABC DEF G BBB BBB BB CCC CCC CC'
+        text : 'ABCDEFG BBBBBBBB CCCCCCCC'
       };
 
       scene_model = {
