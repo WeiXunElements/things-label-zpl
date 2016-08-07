@@ -34,7 +34,6 @@ scene.Ellipse.prototype.toZpl = function() {
   if(this.text)
     zpl += this.toZplForText();
 
-  // console.log(zpl);
 	return zpl;
 }
 

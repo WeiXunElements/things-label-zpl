@@ -127,7 +127,6 @@ scene.Barcode.prototype.toZpl = function() {
     return command.join(',')
   }).join('\n') + '\n';
 
-  console.log(zpl)
 	return zpl;
 }
 

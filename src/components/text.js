@@ -70,7 +70,6 @@ scene.Component.prototype.toZplForText = function() {
 }
 
 scene.Text.prototype.toZpl = function() {
-  // console.log(this.toZplForText());
 
   return this.toZplForText()
 }
