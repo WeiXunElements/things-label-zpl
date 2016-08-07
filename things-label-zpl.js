@@ -186,7 +186,7 @@ scene.Container.prototype.toZpl = function () {
 
   return this.components.map(function (component) {
     return component.toZpl();
-  }).join();
+  }).join('\n');
 };
 
 Object.defineProperty(scene.Component.prototype, "lineColor", {
