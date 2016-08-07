@@ -14,11 +14,11 @@ exports.config = config;
 
 require('./src/components/component');
 require('./src/components/text');
-require('./src/components/barcode');
 require('./src/components/rect');
 require('./src/components/ellipse');
 require('./src/components/line');
 require('./src/components/image');
+require('./src/components/barcode');
 
 },{"./src/components/barcode":3,"./src/components/component":4,"./src/components/ellipse":5,"./src/components/image":6,"./src/components/line":7,"./src/components/rect":8,"./src/components/text":9}],3:[function(require,module,exports){
 'use strict';
@@ -154,7 +154,6 @@ scene.Barcode.prototype.toZpl = function () {
   }).join('\n') + '\n';
 
   console.log(zpl);
-  console.log(scene.Barcode);
   return zpl;
 };
 
