@@ -514,6 +514,12 @@ scene.Component.prototype.toZplForLine = function (bounds, lineColor, borderThic
   var height = bounds.height;
 
 
+  top += borderThickness / 2;
+  left += borderThickness / 2;
+  if (orientation == 'L') width -= borderThickness * 2;else if (orientation == 'R') width -= borderThickness;
+
+  borderThickness *= 2;
+
   var commands = [['^FO' + left, top], ['^GD' + width, height, borderThickness, lineColor, orientation], ['^FS']];
 
   return commands.map(function (command) {
@@ -562,6 +568,13 @@ scene.Component.prototype.toZplForRect = function (bounds, lineColor, borderThic
   var width = bounds.width;
   var height = bounds.height;
 
+  // 라인이 직선일 때에도 GB로직을 타며 테두리의 좌표값을 계산해 줘야 함.
+
+  if (width == 0) {
+    top += borderThickness / 2;
+  } else if (height == 0) {
+    left += borderThickness / 2;
+  }
 
   var commands = [['^FO' + left, top], ['^GB' + width, height, borderThickness, lineColor, Math.round(round * 8 / 100)], ['^FS']];
 

@@ -9,6 +9,16 @@ scene.Component.prototype.toZplForLine = function(bounds, lineColor, borderThick
     height
   } = bounds;
 
+  top += borderThickness / 2;
+  left += borderThickness / 2;
+  
+  if(orientation == 'L')
+    width -= borderThickness * 2;
+  else if(orientation == 'R')
+    width -= borderThickness;
+
+  borderThickness *= 2;
+
   var commands = [
     ['^FO'+left, top],
     ['^GD' + width, height, borderThickness, lineColor, orientation],
@@ -56,4 +66,3 @@ scene.Line.prototype._toZpl = function() {
 }
 
 exports.Line = scene.Line;
-

@@ -8,6 +8,13 @@ scene.Component.prototype.toZplForRect = function(bounds, lineColor, borderThick
     height
   } = bounds;
 
+  // 라인이 직선일 때에도 GB로직을 타며 테두리의 좌표값을 계산해 줘야 함.
+  if(width == 0){
+    top += borderThickness / 2;
+  } else if(height == 0){
+    left += borderThickness / 2;
+  }
+
   var commands = [
     ['^FO' + left, top],
     ['^GB' + width, height, borderThickness, lineColor, Math.round(round * 8 / 100)],
