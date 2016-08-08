@@ -55,7 +55,7 @@ scene.Barcode.prototype._toZpl = function () {
   // barHeight : height of bars (in dots)
   // 유효값 : 1 to 32000 Initial Value at Power-up: 10
   // BC 커맨드의 높이 정보가 없을 때 디폴트로 적용됨.
-  var barHeight = 100;
+  var barHeight = height;
 
   commands.push(['^BY' + scale_w, barRatio, barHeight]);
   commands.push(['^FO' + left, top]);
@@ -168,14 +168,21 @@ var ORIENTATION = {
   BOTTOM_UP_270: 'B'
 };
 
-var printerDPI = 203;
-var printerDPMM = printerDPI / 2.54 / 10;
-var modelUnit = 0.1; // 모델링에서 사용된 수치값은 0.1mm 단위라는 뜻.
-var labelingRatio = printerDPMM * modelUnit;
-
 function isBlackColor(color) {
   return color === 'black' || color === '#000' || color === '#000000';
 }
+
+var printerDPI = 203;
+
+Object.defineProperty(scene.Component.prototype, "labelingRatio", {
+
+  get: function get() {
+    var printerDPMM = printerDPI / 2.54 / 10;
+    var modelUnit = 0.1; // 모델링에서 사용된 수치값은 0.1mm 단위라는 뜻.
+
+    return printerDPMM * modelUnit;
+  }
+});
 
 scene.Scene.prototype.toZpl = function () {
   var _this = this;
@@ -242,7 +249,7 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
     var height = _labelingBounds.height;
 
 
-    if (isBlackColor(fillStyle)) return Math.min(width, height) / 2;else return lineWidth * labelingRatio;;
+    if (isBlackColor(fillStyle)) return Math.min(width, height) / 2;else return lineWidth * this.labelingRatio;;
   }
 });
 
@@ -278,11 +285,11 @@ Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
     var p1 = this.transcoordS2T(left, top);
     var p2 = this.transcoordS2T(left + width, top + height);
 
-    var left = Math.min(p1.x, p2.x) * labelingRatio;
-    var top = Math.min(p1.y, p2.y) * labelingRatio;
+    var left = Math.min(p1.x, p2.x) * this.labelingRatio;
+    var top = Math.min(p1.y, p2.y) * this.labelingRatio;
 
-    var width = Math.abs(p2.x - p1.x) * labelingRatio;
-    var height = Math.abs(p2.y - p1.y) * labelingRatio;
+    var width = Math.abs(p2.x - p1.x) * this.labelingRatio;
+    var height = Math.abs(p2.y - p1.y) * this.labelingRatio;
 
     return { left: left, top: top, width: width, height: height };
   }
@@ -301,11 +308,11 @@ Object.defineProperty(scene.Component.prototype, "labelingBounds", {
     var p1 = this.transcoordS2T(left, top);
     var p2 = this.transcoordS2T(left + width, top + height);
 
-    var left = Math.min(p1.x, p2.x) * labelingRatio;
-    var top = Math.min(p1.y, p2.y) * labelingRatio;
+    var left = Math.min(p1.x, p2.x) * this.labelingRatio;
+    var top = Math.min(p1.y, p2.y) * this.labelingRatio;
 
-    var width = Math.abs(p2.x - p1.x) * labelingRatio;
-    var height = Math.abs(p2.y - p1.y) * labelingRatio;
+    var width = Math.abs(p2.x - p1.x) * this.labelingRatio;
+    var height = Math.abs(p2.y - p1.y) * this.labelingRatio;
 
     return { left: left, top: top, width: width, height: height };
   }
@@ -388,12 +395,15 @@ function getGuid() {
 
 function getImageData(component) {
   var src = component.model.src;
-  var _component$bounds = component.bounds;
-  var top = _component$bounds.top;
-  var left = _component$bounds.left;
-  var width = _component$bounds.width;
-  var height = _component$bounds.height;
+  var _component$labelingBo = component.labelingBounds;
+  var top = _component$labelingBo.top;
+  var left = _component$labelingBo.left;
+  var width = _component$labelingBo.width;
+  var height = _component$labelingBo.height;
 
+
+  width = Math.round(width);
+  height = Math.round(height);
 
   var canvas;
 
@@ -411,7 +421,7 @@ function getImageData(component) {
     image.onload = function () {
       var context = canvas.getContext('2d');
 
-      context.drawImage(image, 0, 0, width, height);
+      context.drawImage(image, 0, 0, this.width, this.height, 0, 0, width, height);
 
       var _context$getImageData = context.getImageData(0, 0, width, height);
 
@@ -428,7 +438,8 @@ function getImageData(component) {
     };
   });
 
-  image.src = src;
+  image.crossOrigin = "use-credentials";
+  image.src = component.app.url(src);
 
   return promise;
 }
@@ -489,8 +500,6 @@ scene.ImageView.prototype.toZpl = function () {
       var result = commands.map(function (command) {
         return command.join(',');
       }).join('\n') + '\n';
-
-      console.log(result);
 
       resolve(result);
     }, function (error) {
@@ -603,7 +612,7 @@ exports.Rect = scene.Rect;
 
 var config = require('../../config').config;
 
-var MAX_NUMBER_OF_LINES = 10;
+var MAX_NUMBER_OF_LINES = 100;
 
 scene.Component.prototype.toZplForText = function () {
   // text 에서는 left, top만 위치를 결정함, width, height는 의미가 없음.
@@ -619,15 +628,17 @@ scene.Component.prototype.toZplForText = function () {
 
 
   var orientation = this.orientation;
-  var lineSpace = this.lineHeight - this.fontSize;
+  var lineSpace = (this.lineHeight - this.fontSize) * this.labelingRatio;
   var text = this.text;
-  var charHeight = this.fontSize;
-  var charWidth = this.fontSize;
+  var charHeight = this.fontSize * this.labelingRatio;
+  var charWidth = this.fontSize * this.labelingRatio;
 
   var fontNo = config.fontNo || 'A';
-  var justification;
 
   if (textWrap) {
+
+    var justification;
+
     switch (textAlign) {
       case 'right':
         justification = 'R';
@@ -670,7 +681,7 @@ scene.Text.prototype._toZpl = function () {
 exports.Text = scene.Text;
 
 },{"../../config":1}],10:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -750,6 +761,7 @@ function getThreshold(width, height, data) {
     }
   }
 
+  console.log('threshold', threshold);
   return threshold;
 }
 
