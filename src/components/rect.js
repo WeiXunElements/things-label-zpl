@@ -19,7 +19,7 @@ scene.Component.prototype.toZplForRect = function(bounds, lineColor, borderThick
   }).join('\n') + '\n';
 };
 
-scene.Rect.prototype.toZpl = function() {
+scene.Rect.prototype._toZpl = function() {
   var {
     round = 0
   } = this.model

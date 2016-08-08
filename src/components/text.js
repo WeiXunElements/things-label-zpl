@@ -69,7 +69,7 @@ scene.Component.prototype.toZplForText = function() {
   }).join('\n') + '\n';
 }
 
-scene.Text.prototype.toZpl = function() {
+scene.Text.prototype._toZpl = function() {
 
   return this.toZplForText()
 }

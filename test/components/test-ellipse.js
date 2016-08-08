@@ -41,7 +41,7 @@ describe('Ellipse', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('FO');
@@ -59,7 +59,7 @@ describe('Ellipse', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].command).to.equal('GE');
       expect(result[1].params[0]).to.equal(String(model.rx * 2));
@@ -74,7 +74,7 @@ describe('Ellipse', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[2]).to.equal(String(model.lineWidth));
     });
@@ -87,7 +87,7 @@ describe('Ellipse', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[2]).to.equal(String(Math.min(model.rx, model.ry)));
     });
@@ -101,7 +101,7 @@ describe('Ellipse', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[3]).to.equal('W');
     });
@@ -115,7 +115,7 @@ describe('Ellipse', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[3]).to.equal('B');
     });

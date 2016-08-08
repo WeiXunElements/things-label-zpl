@@ -44,7 +44,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -66,7 +66,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -88,7 +88,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -110,7 +110,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -132,7 +132,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -154,7 +154,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -176,7 +176,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -198,7 +198,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -220,7 +220,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -242,7 +242,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -264,7 +264,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');
@@ -286,7 +286,7 @@ describe('Barcode', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('BY');

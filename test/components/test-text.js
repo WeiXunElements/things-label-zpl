@@ -38,7 +38,7 @@ describe('Text', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[0].command).to.equal('FO');
       expect(result[0].params[0]).to.equal(String(model.left));

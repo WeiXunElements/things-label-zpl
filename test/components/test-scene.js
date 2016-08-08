@@ -133,19 +133,24 @@ describe('ZPL Builder', function () {
       };
     });
 
-    it('GB 커맨드를 생성해야 한다.', function () {
+    it('GB 커맨드를 생성해야 한다.', function (done) {
       var test_scene = scene.create({
         target: {style:{}},
         model
       });
 
-      console.log(test_scene.toZpl());
+      test_scene.toZpl().then(result => {
+        console.log(result);
+        expect(true).to.equal(true);
 
-      // expect(result[0].command).to.equal('FO');
-      // expect(result[0].params[0]).to.equal(String(bounds.left));
-      // expect(result[0].params[1]).to.equal(String(bounds.top));
-      // expect(result[1].command).to.equal('GB');
-      // expect(result[2].command).to.equal('FS');
+        done();
+      }, error => {
+        console.error(error);
+        expect(true).to.equal(false);
+
+        done();
+      });
+
     });
 
   });

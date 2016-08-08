@@ -39,7 +39,7 @@ describe('Rect', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
       var bounds = component.bounds
 
       expect(result[0].command).to.equal('FO');
@@ -59,7 +59,7 @@ describe('Rect', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[4]).to.equal('8');
     });
@@ -74,7 +74,7 @@ describe('Rect', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[4]).to.equal('4');
     });
@@ -87,7 +87,7 @@ describe('Rect', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[2]).to.equal(String(model.lineWidth));
     });
@@ -101,7 +101,7 @@ describe('Rect', function () {
       });
 
       var component = test_scene.findFirst('#target');
-      var result = parseZpl(component.toZpl());
+      var result = parseZpl(component._toZpl());
 
       expect(result[1].params[3]).to.equal('W');
     });
@@ -142,7 +142,7 @@ describe('Rect', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[0]).to.equal(String(model.height));
       expect(result[1].params[1]).to.equal(String(model.width));
@@ -157,7 +157,7 @@ describe('Rect', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[2]).to.equal(String(Math.min(model.width, model.height)/2));
     });
@@ -171,7 +171,7 @@ describe('Rect', function () {
       });
 
       var component = test_scene.findFirst('#target')
-      var result = parseZpl(component.toZpl())
+      var result = parseZpl(component._toZpl())
 
       expect(result[1].params[2]).to.equal(String(Math.min(model.width, model.height)/2));
     });

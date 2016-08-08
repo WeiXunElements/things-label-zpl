@@ -20,7 +20,7 @@ scene.Component.prototype.toZplForLine = function(bounds, lineColor, borderThick
   }).join('\n') + '\n';
 };
 
-scene.Line.prototype.toZpl = function() {
+scene.Line.prototype._toZpl = function() {
   var bounds = this.labelingBounds;
   var zpl;
 

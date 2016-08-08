@@ -12,24 +12,46 @@ function isBlackColor(color) {
 }
 
 scene.Scene.prototype.toZpl = function() {
-  return [
-    '^XA',
-    '^PW' + (80 / 2.54 * 203) + '\n',
-    this.root.toZpl(),
-    '^XZ'
-  ].join('\n');
+
+  return new Promise((resolve, reject) => {
+    this.root.toZpl().then(result => {
+      resolve([
+          '^XA',
+          '^PW' + (80 / 2.54 * 203) + '\n',
+          result,
+          '^XZ'
+        ].join('\n')
+      );
+    }, reason => {
+      reject(reason);
+    });
+  });
 }
 
 scene.Component.prototype.toZpl = function() {
 
-  return '';
+  return new Promise((resolve, reject) => {
+    try {
+      resolve(this._toZpl())
+    } catch(error) {
+      reject(error);
+    }
+  });
 }
 
 scene.Container.prototype.toZpl = function() {
 
-  return this.components.map(component => {
-    return component.toZpl();
-  }).join('\n');
+  return new Promise((resolve, reject) => {
+    var promises = this.components.map(component => {
+      return component.toZpl();
+    });
+
+    Promise.all(promises).then(results => {
+      resolve(results.join('\n'));
+    }, error => {
+      reject(error);
+    });
+  });
 }
 
 Object.defineProperty(scene.Component.prototype, "lineColor", {

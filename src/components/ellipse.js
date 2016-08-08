@@ -22,7 +22,7 @@ scene.Component.prototype.toZplForEllipse = function(bounds, lineColor, borderTh
   }).join('\n') + '\n';
 };
 
-scene.Ellipse.prototype.toZpl = function() {
+scene.Ellipse.prototype._toZpl = function() {
 
   var zpl = this.toZplForEllipse(
     this.labelingBounds,
