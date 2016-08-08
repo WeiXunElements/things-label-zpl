@@ -5,16 +5,23 @@ const ORIENTATION = {
   BOTTOM_UP_270: 'B'
 }
 
-var printerDPI = 203;
-var printerDPMM = printerDPI / 2.54 / 10;
-var modelUnit = 0.1; // 모델링에서 사용된 수치값은 0.1mm 단위라는 뜻.
-var labelingRatio = printerDPMM * modelUnit;
-
 function isBlackColor(color) {
   return color === 'black' ||
     color === '#000' ||
     color === '#000000';
 }
+
+var printerDPI = 203;
+
+Object.defineProperty(scene.Component.prototype, "labelingRatio", {
+
+  get: function() {
+    var printerDPMM = printerDPI / 2.54 / 10;
+    var modelUnit = 0.1; // 모델링에서 사용된 수치값은 0.1mm 단위라는 뜻.
+
+    return printerDPMM * modelUnit;
+  }
+});
 
 scene.Scene.prototype.toZpl = function() {
 
@@ -92,7 +99,7 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
     if(isBlackColor(fillStyle))
       return Math.min(width, height) / 2;
     else
-      return lineWidth * labelingRatio;;
+      return lineWidth * this.labelingRatio;;
   }
 });
 
@@ -128,11 +135,11 @@ Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
     var p1 = this.transcoordS2T(left, top);
     var p2 = this.transcoordS2T(left + width, top + height);
 
-    var left = Math.min(p1.x, p2.x) * labelingRatio;
-    var top = Math.min(p1.y, p2.y) * labelingRatio;
+    var left = Math.min(p1.x, p2.x) * this.labelingRatio;
+    var top = Math.min(p1.y, p2.y) * this.labelingRatio;
 
-    var width = Math.abs(p2.x - p1.x) * labelingRatio;
-    var height = Math.abs(p2.y - p1.y) * labelingRatio;
+    var width = Math.abs(p2.x - p1.x) * this.labelingRatio;
+    var height = Math.abs(p2.y - p1.y) * this.labelingRatio;
 
     return {left, top, width, height};
   }
@@ -151,11 +158,11 @@ Object.defineProperty(scene.Component.prototype, "labelingBounds", {
     var p1 = this.transcoordS2T(left, top);
     var p2 = this.transcoordS2T(left + width, top + height);
 
-    var left = Math.min(p1.x, p2.x) * labelingRatio;
-    var top = Math.min(p1.y, p2.y) * labelingRatio;
+    var left = Math.min(p1.x, p2.x) * this.labelingRatio;
+    var top = Math.min(p1.y, p2.y) * this.labelingRatio;
 
-    var width = Math.abs(p2.x - p1.x) * labelingRatio;
-    var height = Math.abs(p2.y - p1.y) * labelingRatio;
+    var width = Math.abs(p2.x - p1.x) * this.labelingRatio;
+    var height = Math.abs(p2.y - p1.y) * this.labelingRatio;
 
     return {left, top, width, height};
   }

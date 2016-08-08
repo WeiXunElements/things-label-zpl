@@ -29,7 +29,7 @@ scene.Barcode.prototype._toZpl = function() {
   // barHeight : height of bars (in dots)
   // 유효값 : 1 to 32000 Initial Value at Power-up: 10
   // BC 커맨드의 높이 정보가 없을 때 디폴트로 적용됨.
-  var barHeight = 100;
+  var barHeight = height;
 
 	commands.push(['^BY' + scale_w, barRatio, barHeight]);
   commands.push(['^FO' + left, top]);
