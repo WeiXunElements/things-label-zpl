@@ -1,6 +1,6 @@
 var config = require('../../config').config
 
-const MAX_NUMBER_OF_LINES = 10;
+const MAX_NUMBER_OF_LINES = 100;
 
 scene.Component.prototype.toZplForText = function() {
   // text 에서는 left, top만 위치를 결정함, width, height는 의미가 없음.
@@ -24,9 +24,11 @@ scene.Component.prototype.toZplForText = function() {
   var charWidth = this.fontSize * this.labelingRatio;
 
   var fontNo = config.fontNo || 'A';
-  var justification;
 
   if(textWrap) {
+
+    var justification;
+
     switch(textAlign) {
       case 'right':
         justification = 'R';

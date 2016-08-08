@@ -395,12 +395,15 @@ function getGuid() {
 
 function getImageData(component) {
   var src = component.model.src;
-  var _component$bounds = component.bounds;
-  var top = _component$bounds.top;
-  var left = _component$bounds.left;
-  var width = _component$bounds.width;
-  var height = _component$bounds.height;
+  var _component$labelingBo = component.labelingBounds;
+  var top = _component$labelingBo.top;
+  var left = _component$labelingBo.left;
+  var width = _component$labelingBo.width;
+  var height = _component$labelingBo.height;
 
+
+  width = Math.round(width);
+  height = Math.round(height);
 
   var canvas;
 
@@ -418,7 +421,7 @@ function getImageData(component) {
     image.onload = function () {
       var context = canvas.getContext('2d');
 
-      context.drawImage(image, 0, 0, width, height);
+      context.drawImage(image, 0, 0, this.width, this.height, 0, 0, width, height);
 
       var _context$getImageData = context.getImageData(0, 0, width, height);
 
@@ -435,7 +438,8 @@ function getImageData(component) {
     };
   });
 
-  image.src = src;
+  image.crossOrigin = "use-credentials";
+  image.src = component.app.url(src);
 
   return promise;
 }
@@ -496,8 +500,6 @@ scene.ImageView.prototype.toZpl = function () {
       var result = commands.map(function (command) {
         return command.join(',');
       }).join('\n') + '\n';
-
-      console.log(result);
 
       resolve(result);
     }, function (error) {
@@ -597,7 +599,7 @@ exports.Rect = scene.Rect;
 
 var config = require('../../config').config;
 
-var MAX_NUMBER_OF_LINES = 10;
+var MAX_NUMBER_OF_LINES = 100;
 
 scene.Component.prototype.toZplForText = function () {
   // text 에서는 left, top만 위치를 결정함, width, height는 의미가 없음.
@@ -619,9 +621,11 @@ scene.Component.prototype.toZplForText = function () {
   var charWidth = this.fontSize * this.labelingRatio;
 
   var fontNo = config.fontNo || 'A';
-  var justification;
 
   if (textWrap) {
+
+    var justification;
+
     switch (textAlign) {
       case 'right':
         justification = 'R';
@@ -664,7 +668,7 @@ scene.Text.prototype._toZpl = function () {
 exports.Text = scene.Text;
 
 },{"../../config":1}],10:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -744,6 +748,7 @@ function getThreshold(width, height, data) {
     }
   }
 
+  console.log('threshold', threshold);
   return threshold;
 }
 

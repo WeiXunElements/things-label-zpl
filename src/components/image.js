@@ -19,7 +19,10 @@ function getImageData(component) {
     left,
     width,
     height,
-  } = component.bounds;
+  } = component.labelingBounds;
+
+  width = Math.round(width);
+  height = Math.round(height);
 
   var canvas;
 
@@ -37,7 +40,7 @@ function getImageData(component) {
     image.onload = function() {
       var context = canvas.getContext('2d');
 
-      context.drawImage(image, 0, 0, width, height);
+      context.drawImage(image, 0, 0, this.width, this.height, 0, 0, width, height);
       var {
         data
       } = context.getImageData(0, 0, width, height);
@@ -52,7 +55,8 @@ function getImageData(component) {
     }
   });
 
-  image.src = src;
+  image.crossOrigin = "use-credentials";
+  image.src = component.app.url(src);
 
   return promise;
 }
@@ -119,8 +123,6 @@ scene.ImageView.prototype.toZpl = function() {
       var result = commands.map(command => {
         return command.join(',')
       }).join('\n') + '\n';
-
-      console.log(result);
 
       resolve(result);
 
