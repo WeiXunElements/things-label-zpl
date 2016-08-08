@@ -2,7 +2,7 @@
 'use strict';
 
 var config = {
-	fontNo: 'A',
+	fontNo: '6',
 	dpi: 203
 	// dpi: 300
 };
@@ -168,6 +168,11 @@ var ORIENTATION = {
   BOTTOM_UP_270: 'B'
 };
 
+var printerDPI = 203;
+var printerDPMM = printerDPI / 2.54 / 10;
+var modelUnit = 0.1; // 모델링에서 사용된 수치값은 0.1mm 단위라는 뜻.
+var labelingRatio = printerDPMM * modelUnit;
+
 function isBlackColor(color) {
   return color === 'black' || color === '#000' || color === '#000000';
 }
@@ -175,9 +180,11 @@ function isBlackColor(color) {
 scene.Scene.prototype.toZpl = function () {
   var _this = this;
 
+  var labelWidth = Number(this.root.get('width')) / 100;
+
   return new Promise(function (resolve, reject) {
     _this.root.toZpl().then(function (result) {
-      resolve(['^XA', '^PW' + 80 / 2.54 * 203 + '\n', result, '^XZ'].join('\n'));
+      resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n', result, '^XZ'].join('\n'));
     }, function (reason) {
       reject(reason);
     });
@@ -235,7 +242,7 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
     var height = _labelingBounds.height;
 
 
-    if (isBlackColor(fillStyle)) return Math.min(width, height) / 2;else return lineWidth;
+    if (isBlackColor(fillStyle)) return Math.min(width, height) / 2;else return lineWidth * labelingRatio;;
   }
 });
 
@@ -268,10 +275,14 @@ Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
     var height = _textBounds.height;
 
 
-    left += this.paddingLeft || 0;
-    top += this.paddingTop || 0;
-    width -= (this.paddingLeft || 0) + (this.paddingRight || 0);
-    height -= (this.paddingTop || 0) + (this.paddingBottom || 0);
+    var p1 = this.transcoordS2T(left, top);
+    var p2 = this.transcoordS2T(left + width, top + height);
+
+    var left = Math.min(p1.x, p2.x) * labelingRatio;
+    var top = Math.min(p1.y, p2.y) * labelingRatio;
+
+    var width = Math.abs(p2.x - p1.x) * labelingRatio;
+    var height = Math.abs(p2.y - p1.y) * labelingRatio;
 
     return { left: left, top: top, width: width, height: height };
   }
@@ -290,11 +301,11 @@ Object.defineProperty(scene.Component.prototype, "labelingBounds", {
     var p1 = this.transcoordS2T(left, top);
     var p2 = this.transcoordS2T(left + width, top + height);
 
-    var left = Math.min(p1.x, p2.x);
-    var top = Math.min(p1.y, p2.y);
+    var left = Math.min(p1.x, p2.x) * labelingRatio;
+    var top = Math.min(p1.y, p2.y) * labelingRatio;
 
-    var width = Math.abs(p2.x - p1.x);
-    var height = Math.abs(p2.y - p1.y);
+    var width = Math.abs(p2.x - p1.x) * labelingRatio;
+    var height = Math.abs(p2.y - p1.y) * labelingRatio;
 
     return { left: left, top: top, width: width, height: height };
   }

@@ -9,7 +9,7 @@
     "test": "./node_modules/.bin/mocha --require should --compilers js:babel-core/register test/**/test-*.js",
     "watchify": "watchify --extension=js -o things-label-zpl.js index.js",
     "build": "browserify index.js -o things-label-zpl.js && uglifyjs things-label-zpl.js -m -c -o things-label-zpl-min.js",
-    "start": "npm run compile && node demo.js"
+    "serve": "npm run compile"
   },
   "repository": {
     "type": "git",
