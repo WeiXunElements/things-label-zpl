@@ -525,6 +525,7 @@ scene.Component.prototype.toZplForLine = function (bounds, lineColor, borderThic
 
   top += borderThickness / 2;
   left += borderThickness / 2;
+
   if (orientation == 'L') width -= borderThickness * 2;else if (orientation == 'R') width -= borderThickness;
 
   borderThickness *= 2;
@@ -681,7 +682,7 @@ scene.Text.prototype._toZpl = function () {
 exports.Text = scene.Text;
 
 },{"../../config":1}],10:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -761,7 +762,6 @@ function getThreshold(width, height, data) {
     }
   }
 
-  console.log('threshold', threshold);
   return threshold;
 }
 
