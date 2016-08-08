@@ -25,7 +25,7 @@ require('./src/components/barcode');
 
 var config = require('../../config').config;
 
-scene.Barcode.prototype.toZpl = function () {
+scene.Barcode.prototype._toZpl = function () {
   var _model = this.model;
   var symbol = _model.symbol;
   var _model$scale_w = _model.scale_w;
@@ -153,7 +153,6 @@ scene.Barcode.prototype.toZpl = function () {
     return command.join(',');
   }).join('\n') + '\n';
 
-  console.log(zpl);
   return zpl;
 };
 
@@ -174,19 +173,43 @@ function isBlackColor(color) {
 }
 
 scene.Scene.prototype.toZpl = function () {
-  return ['^XA', '^PW' + 80 / 2.54 * 203 + '\n', this.root.toZpl(), '^XZ'].join('\n');
+  var _this = this;
+
+  return new Promise(function (resolve, reject) {
+    _this.root.toZpl().then(function (result) {
+      resolve(['^XA', '^PW' + 80 / 2.54 * 203 + '\n', result, '^XZ'].join('\n'));
+    }, function (reason) {
+      reject(reason);
+    });
+  });
 };
 
 scene.Component.prototype.toZpl = function () {
+  var _this2 = this;
 
-  return '';
+  return new Promise(function (resolve, reject) {
+    try {
+      resolve(_this2._toZpl());
+    } catch (error) {
+      reject(error);
+    }
+  });
 };
 
 scene.Container.prototype.toZpl = function () {
+  var _this3 = this;
 
-  return this.components.map(function (component) {
-    return component.toZpl();
-  }).join('\n');
+  return new Promise(function (resolve, reject) {
+    var promises = _this3.components.map(function (component) {
+      return component.toZpl();
+    });
+
+    Promise.all(promises).then(function (results) {
+      resolve(results.join('\n'));
+    }, function (error) {
+      reject(error);
+    });
+  });
 };
 
 Object.defineProperty(scene.Component.prototype, "lineColor", {
@@ -328,14 +351,13 @@ scene.Component.prototype.toZplForEllipse = function (bounds, lineColor, borderT
   }).join('\n') + '\n';
 };
 
-scene.Ellipse.prototype.toZpl = function () {
+scene.Ellipse.prototype._toZpl = function () {
 
   var zpl = this.toZplForEllipse(this.labelingBounds, this.lineColor, this.borderThickness);
 
   // build text command
   if (this.text) zpl += this.toZplForText();
 
-  // console.log(zpl);
   return zpl;
 };
 
@@ -488,7 +510,7 @@ scene.Component.prototype.toZplForLine = function (bounds, lineColor, borderThic
   }).join('\n') + '\n';
 };
 
-scene.Line.prototype.toZpl = function () {
+scene.Line.prototype._toZpl = function () {
   var bounds = this.labelingBounds;
   var zpl;
 
@@ -513,7 +535,6 @@ scene.Line.prototype.toZpl = function () {
   // build text command
   if (this.text) zpl += this.toZplForText();
 
-  // console.log(zpl);
   return zpl;
 };
 
@@ -538,7 +559,7 @@ scene.Component.prototype.toZplForRect = function (bounds, lineColor, borderThic
   }).join('\n') + '\n';
 };
 
-scene.Rect.prototype.toZpl = function () {
+scene.Rect.prototype._toZpl = function () {
   var _model$round = this.model.round;
   var round = _model$round === undefined ? 0 : _model$round;
 
@@ -548,7 +569,6 @@ scene.Rect.prototype.toZpl = function () {
   // build text command
   if (this.text) zpl += this.toZplForText();
 
-  // console.log(zpl);
   return zpl;
 };
 
@@ -618,8 +638,7 @@ scene.Component.prototype.toZplForText = function () {
   }).join('\n') + '\n';
 };
 
-scene.Text.prototype.toZpl = function () {
-  // console.log(this.toZplForText());
+scene.Text.prototype._toZpl = function () {
 
   return this.toZplForText();
 };
