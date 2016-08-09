@@ -83,6 +83,17 @@ Object.defineProperty(scene.Component.prototype, "lineColor", {
   }
 });
 
+Object.defineProperty(scene.Component.prototype, "lineWidth", {
+
+  get: function() {
+    var {
+      lineWidth
+    } = this.model;
+
+    return lineWidth * this.labelingRatio;;
+  }
+});
+
 Object.defineProperty(scene.Component.prototype, "borderThickness", {
 
   get: function() {
