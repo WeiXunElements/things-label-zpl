@@ -23,12 +23,12 @@ Object.defineProperty(scene.Component.prototype, "labelingRatio", {
   }
 });
 
-scene.Scene.prototype.toZpl = function() {
+scene.Scene.prototype.toZpl = function(T) {
 
   var labelWidth = Number(this.root.get('width')) / 100;
 
   return new Promise((resolve, reject) => {
-    this.root.toZpl().then(result => {
+    this.root.toZpl(T).then(result => {
       resolve([
           '^XA',
           '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n',
@@ -42,22 +42,27 @@ scene.Scene.prototype.toZpl = function() {
   });
 }
 
-scene.Component.prototype.toZpl = function() {
+scene.Component.prototype.toZpl = function(T) {
 
   return new Promise((resolve, reject) => {
     try {
-      resolve(this._toZpl())
+      resolve(this._toZpl(T))
     } catch(error) {
       reject(error);
     }
   });
 }
 
-scene.Container.prototype.toZpl = function() {
+/**
+ * ZPL로 변환한 결과를 리턴한다.
+ * @T      boolean template true이면 ZPL 템플릿을 만들며, false이면 최종 ZPL을 만든다.
+ * @return promise ZPL 결과를 반환하기 위한 promise 객체
+ */
+scene.Container.prototype.toZpl = function(T) {
 
   return new Promise((resolve, reject) => {
     var promises = this.components.map(component => {
-      return component.toZpl();
+      return component.toZpl(T);
     });
 
     Promise.all(promises).then(results => {

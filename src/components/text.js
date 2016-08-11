@@ -2,7 +2,7 @@ var config = require('../../config').config
 
 const MAX_NUMBER_OF_LINES = 100;
 
-scene.Component.prototype.toZplForText = function() {
+scene.Component.prototype.toZplForText = function(T) {
   // text 에서는 left, top만 위치를 결정함, width, height는 의미가 없음.
   var {
     textWrap,
@@ -19,7 +19,7 @@ scene.Component.prototype.toZplForText = function() {
 
   var orientation = this.orientation;
   var lineSpace = (this.lineHeight - this.fontSize) * this.labelingRatio;
-  var text = this.text;
+  var text = T ? this.get('text') : this.text;
   var charHeight = this.fontSize * this.labelingRatio;
   var charWidth = this.fontSize * this.labelingRatio;
 
@@ -71,9 +71,9 @@ scene.Component.prototype.toZplForText = function() {
   }).join('\n') + '\n';
 }
 
-scene.Text.prototype._toZpl = function() {
+scene.Text.prototype._toZpl = function(T) {
 
-  return this.toZplForText()
+  return this.toZplForText(T)
 }
 
 exports.Text = scene.Text;

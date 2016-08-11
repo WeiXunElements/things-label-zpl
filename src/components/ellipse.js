@@ -22,7 +22,7 @@ scene.Component.prototype.toZplForEllipse = function(bounds, lineColor, borderTh
   }).join('\n') + '\n';
 };
 
-scene.Ellipse.prototype._toZpl = function() {
+scene.Ellipse.prototype._toZpl = function(T) {
 
   var zpl = this.toZplForEllipse(
     this.labelingBounds,
@@ -31,8 +31,8 @@ scene.Ellipse.prototype._toZpl = function() {
   );
 
   // build text command
-  if(this.text)
-    zpl += this.toZplForText();
+  if((T ? this.get('text') : this.text))
+    zpl += this.toZplForText(T);
 
 	return zpl;
 }

@@ -1,6 +1,6 @@
 var config = require('../../config').config
 
-scene.Barcode.prototype._toZpl = function() {
+scene.Barcode.prototype._toZpl = function(T) {
 	var {
 		symbol,
 		scale_w = 1,
@@ -15,7 +15,7 @@ scene.Barcode.prototype._toZpl = function() {
     height
   } = this.labelingBounds;
 
-  var text = this.text;
+  var text = T ? this.get('text') : this.text;
 	var orientation = this.orientation;
 
 	var commands = [];

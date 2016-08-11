@@ -25,7 +25,7 @@ require('./src/components/barcode');
 
 var config = require('../../config').config;
 
-scene.Barcode.prototype._toZpl = function () {
+scene.Barcode.prototype._toZpl = function (T) {
   var _model = this.model;
   var symbol = _model.symbol;
   var _model$scale_w = _model.scale_w;
@@ -41,7 +41,7 @@ scene.Barcode.prototype._toZpl = function () {
   var height = _labelingBounds.height;
 
 
-  var text = this.text;
+  var text = T ? this.get('text') : this.text;
   var orientation = this.orientation;
 
   var commands = [];
@@ -184,13 +184,13 @@ Object.defineProperty(scene.Component.prototype, "labelingRatio", {
   }
 });
 
-scene.Scene.prototype.toZpl = function () {
+scene.Scene.prototype.toZpl = function (T) {
   var _this = this;
 
   var labelWidth = Number(this.root.get('width')) / 100;
 
   return new Promise(function (resolve, reject) {
-    _this.root.toZpl().then(function (result) {
+    _this.root.toZpl(T).then(function (result) {
       resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n', result, '^XZ'].join('\n'));
     }, function (reason) {
       reject(reason);
@@ -198,24 +198,29 @@ scene.Scene.prototype.toZpl = function () {
   });
 };
 
-scene.Component.prototype.toZpl = function () {
+scene.Component.prototype.toZpl = function (T) {
   var _this2 = this;
 
   return new Promise(function (resolve, reject) {
     try {
-      resolve(_this2._toZpl());
+      resolve(_this2._toZpl(T));
     } catch (error) {
       reject(error);
     }
   });
 };
 
-scene.Container.prototype.toZpl = function () {
+/**
+ * ZPL로 변환한 결과를 리턴한다.
+ * @T      boolean template true이면 ZPL 템플릿을 만들며, false이면 최종 ZPL을 만든다.
+ * @return promise ZPL 결과를 반환하기 위한 promise 객체
+ */
+scene.Container.prototype.toZpl = function (T) {
   var _this3 = this;
 
   return new Promise(function (resolve, reject) {
     var promises = _this3.components.map(function (component) {
-      return component.toZpl();
+      return component.toZpl(T);
     });
 
     Promise.all(promises).then(function (results) {
@@ -360,12 +365,12 @@ scene.Component.prototype.toZplForEllipse = function (bounds, lineColor, borderT
   }).join('\n') + '\n';
 };
 
-scene.Ellipse.prototype._toZpl = function () {
+scene.Ellipse.prototype._toZpl = function (T) {
 
   var zpl = this.toZplForEllipse(this.labelingBounds, this.lineColor, this.borderThickness);
 
   // build text command
-  if (this.text) zpl += this.toZplForText();
+  if (T ? this.get('text') : this.text) zpl += this.toZplForText(T);
 
   return zpl;
 };
@@ -474,7 +479,7 @@ function getImageGrf(width, height, data) {
   return bytesPerLine * height + ',' + bytesPerLine + ',' + grfData;
 }
 
-scene.ImageView.prototype.toZpl = function () {
+scene.ImageView.prototype.toZpl = function (T) {
   var _labelingBounds = this.labelingBounds;
   var top = _labelingBounds.top;
   var left = _labelingBounds.left;
@@ -528,7 +533,7 @@ scene.Component.prototype.toZplForLine = function (bounds, lineColor, borderThic
   }).join('\n') + '\n';
 };
 
-scene.Line.prototype._toZpl = function () {
+scene.Line.prototype._toZpl = function (T) {
   var bounds = this.labelingBounds;
   var zpl;
 
@@ -561,7 +566,7 @@ scene.Line.prototype._toZpl = function () {
   }
 
   // build text command
-  if (this.text) zpl += this.toZplForText();
+  if (T ? this.get('text') : this.text) zpl += this.toZplForText(T);
 
   return zpl;
 };
@@ -587,7 +592,7 @@ scene.Component.prototype.toZplForRect = function (bounds, lineColor, borderThic
   }).join('\n') + '\n';
 };
 
-scene.Rect.prototype._toZpl = function () {
+scene.Rect.prototype._toZpl = function (T) {
   var _model$round = this.model.round;
   var round = _model$round === undefined ? 0 : _model$round;
 
@@ -595,7 +600,7 @@ scene.Rect.prototype._toZpl = function () {
   var zpl = this.toZplForRect(this.labelingBounds, this.lineColor, this.borderThickness, round);
 
   // build text command
-  if (this.text) zpl += this.toZplForText();
+  if (T ? this.get('text') : this.text) zpl += this.toZplForText(T);
 
   return zpl;
 };
@@ -609,7 +614,7 @@ var config = require('../../config').config;
 
 var MAX_NUMBER_OF_LINES = 100;
 
-scene.Component.prototype.toZplForText = function () {
+scene.Component.prototype.toZplForText = function (T) {
   // text 에서는 left, top만 위치를 결정함, width, height는 의미가 없음.
   var _model = this.model;
   var textWrap = _model.textWrap;
@@ -624,7 +629,7 @@ scene.Component.prototype.toZplForText = function () {
 
   var orientation = this.orientation;
   var lineSpace = (this.lineHeight - this.fontSize) * this.labelingRatio;
-  var text = this.text;
+  var text = T ? this.get('text') : this.text;
   var charHeight = this.fontSize * this.labelingRatio;
   var charWidth = this.fontSize * this.labelingRatio;
 
@@ -668,9 +673,9 @@ scene.Component.prototype.toZplForText = function () {
   }).join('\n') + '\n';
 };
 
-scene.Text.prototype._toZpl = function () {
+scene.Text.prototype._toZpl = function (T) {
 
-  return this.toZplForText();
+  return this.toZplForText(T);
 };
 
 exports.Text = scene.Text;

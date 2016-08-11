@@ -100,7 +100,7 @@ function getImageGrf(width, height, data) {
   return bytesPerLine * height + ',' + bytesPerLine + ',' + grfData;
 }
 
-scene.ImageView.prototype.toZpl = function() {
+scene.ImageView.prototype.toZpl = function(T) {
   var {
     top,
     left
