@@ -114,25 +114,6 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
   }
 });
 
-Object.defineProperty(scene.Component.prototype, "textBounds", {
-
-  get: function() {
-    var {
-      left,
-      top,
-      width,
-      height
-    } = this.bounds;
-
-    left += this.paddingLeft || 0;
-    top += this.paddingTop || 0;
-    width -= (this.paddingLeft || 0) + (this.paddingRight || 0);
-    height -= (this.paddingTop || 0) + (this.paddingBottom || 0);
-
-    return {left, top, width, height};
-  }
-});
-
 Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
 
   get: function() {

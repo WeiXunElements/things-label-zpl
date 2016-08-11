@@ -263,25 +263,6 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
   }
 });
 
-Object.defineProperty(scene.Component.prototype, "textBounds", {
-
-  get: function get() {
-    var _bounds = this.bounds;
-    var left = _bounds.left;
-    var top = _bounds.top;
-    var width = _bounds.width;
-    var height = _bounds.height;
-
-
-    left += this.paddingLeft || 0;
-    top += this.paddingTop || 0;
-    width -= (this.paddingLeft || 0) + (this.paddingRight || 0);
-    height -= (this.paddingTop || 0) + (this.paddingBottom || 0);
-
-    return { left: left, top: top, width: width, height: height };
-  }
-});
-
 Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
 
   get: function get() {
@@ -308,11 +289,11 @@ Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
 Object.defineProperty(scene.Component.prototype, "labelingBounds", {
 
   get: function get() {
-    var _bounds2 = this.bounds;
-    var left = _bounds2.left;
-    var top = _bounds2.top;
-    var width = _bounds2.width;
-    var height = _bounds2.height;
+    var _bounds = this.bounds;
+    var left = _bounds.left;
+    var top = _bounds.top;
+    var width = _bounds.width;
+    var height = _bounds.height;
 
 
     var p1 = this.transcoordS2T(left, top);
