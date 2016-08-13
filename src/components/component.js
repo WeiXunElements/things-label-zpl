@@ -129,6 +129,17 @@ Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
       height
     } = this.textBounds;
 
+    /**
+     * ZPL 템플릿으로는 프린트 시점에 몇 줄이 될 지 알 수 없으므로,
+     * - textBaseline 속성은 무조건 TOP 이라고 전제한다.
+     * - text는 무조건 한 줄이라고 전제한다.
+     * 따라서, height 값은 무조건 fontSize로 한다.
+     *
+     * TODO. 무조건 한줄이라는 전제조건이면, textBaseline기능이 계산될 수 있으므로, 개선하자.
+     * 또한, 템플릿으로 프린트하지 않는 경우에는 몇줄이 되더라도 계산이 가능하므로, 개선하자.
+     */
+    height = this.fontSize;
+
     var p1 = this.transcoordS2T(left, top);
     var p2 = this.transcoordS2T(left + width, top + height);
 

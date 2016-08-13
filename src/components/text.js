@@ -3,7 +3,7 @@ var config = require('../../config').config
 const MAX_NUMBER_OF_LINES = 100;
 
 scene.Component.prototype.toZplForText = function(T) {
-  // text 에서는 left, top만 위치를 결정함, width, height는 의미가 없음.
+
   var {
     textWrap,
     textAlign,
