@@ -811,7 +811,6 @@ function getImageGrf(width, height, src) {
     image.onload = function () {
       var context = canvas.getContext('2d');
 
-      console.log('image size, target size', this.width, this.height, width, height);
       context.drawImage(image, 0, 0, this.width, this.height, 0, 0, width, height);
 
       var _context$getImageData = context.getImageData(0, 0, width, height);
