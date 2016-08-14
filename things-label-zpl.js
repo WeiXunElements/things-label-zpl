@@ -175,6 +175,8 @@ exports.Barcode = scene.Barcode;
 },{"../../config":1}],4:[function(require,module,exports){
 'use strict';
 
+var _toGrf = require('../utils/to-grf');
+
 var ORIENTATION = {
   NORMAL: 'N',
   ROTATE_90: 'R',
@@ -191,24 +193,45 @@ var printerDPI = 203;
 Object.defineProperty(scene.Component.prototype, "labelingRatio", {
 
   get: function get() {
-    var printerDPMM = printerDPI / 2.54 / 10;
+    var printerDPMM = printerDPI / 2.54 / 10; // mm 당 프린트 도트 갯수.
     var modelUnit = 0.1; // 모델링에서 사용된 수치값은 0.1mm 단위라는 뜻.
 
     return printerDPMM * modelUnit;
   }
 });
 
-scene.Scene.prototype.toZpl = function (T) {
+scene.Scene.prototype.toGRF = function () {
+
+  var bounds = this.root.bounds;
+  var ratio = this.root.labelingRatio;
+
+  bounds.left = Math.round(bounds.left * ratio);
+  bounds.top = Math.round(bounds.top * ratio);
+  bounds.width = Math.round(bounds.width * ratio);
+  bounds.height = Math.round(bounds.height * ratio);
+
+  return (0, _toGrf.getGrfCommand)(bounds, this.toDataURL(undefined, undefined, bounds.width, bounds.height));
+};
+
+scene.Scene.prototype.toZpl = function (T, I) {
   var _this = this;
 
   var labelWidth = Number(this.root.get('width')) / 100;
 
   return new Promise(function (resolve, reject) {
-    _this.root.toZpl(T).then(function (result) {
-      resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n', result, '^XZ'].join('\n'));
-    }, function (reason) {
-      reject(reason);
-    });
+    if (I) {
+      _this.toGRF().then(function (result) {
+        resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n', result, '^XZ'].join('\n'));
+      }, function (reason) {
+        reject(reason);
+      });
+    } else {
+      _this.root.toZpl(T).then(function (result) {
+        resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n', result, '^XZ'].join('\n'));
+      }, function (reason) {
+        reject(reason);
+      });
+    }
   });
 };
 
@@ -263,7 +286,7 @@ Object.defineProperty(scene.Component.prototype, "lineWidth", {
     var lineWidth = this.model.lineWidth;
 
 
-    return lineWidth * this.labelingRatio;;
+    return Math.round(lineWidth * this.labelingRatio);
   }
 });
 
@@ -278,7 +301,7 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
     var height = _labelingBounds.height;
 
 
-    if (isBlackColor(fillStyle)) return Math.min(width, height) / 2;else return lineWidth * this.labelingRatio;;
+    if (isBlackColor(fillStyle)) return Math.round(Math.min(width, height) / 2);else return Math.round(lineWidth * this.labelingRatio);
   }
 });
 
@@ -312,7 +335,12 @@ Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
     var width = Math.abs(p2.x - p1.x) * this.labelingRatio;
     var height = Math.abs(p2.y - p1.y) * this.labelingRatio;
 
-    return { left: left, top: top, width: width, height: height };
+    return {
+      left: Math.round(left),
+      top: Math.round(top),
+      width: Math.round(width),
+      height: Math.round(height)
+    };
   }
 });
 
@@ -335,7 +363,12 @@ Object.defineProperty(scene.Component.prototype, "labelingBounds", {
     var width = Math.abs(p2.x - p1.x) * this.labelingRatio;
     var height = Math.abs(p2.y - p1.y) * this.labelingRatio;
 
-    return { left: left, top: top, width: width, height: height };
+    return {
+      left: Math.round(left),
+      top: Math.round(top),
+      width: Math.round(width),
+      height: Math.round(height)
+    };
   }
 });
 
@@ -367,7 +400,7 @@ Object.defineProperty(scene.Component.prototype, "orientation", {
 
 exports.Component = scene.Component;
 
-},{}],5:[function(require,module,exports){
+},{"../utils/to-grf":11}],5:[function(require,module,exports){
 'use strict';
 
 require('./text');
@@ -405,125 +438,20 @@ exports.Ellipse = scene.Ellipse;
 },{"./text":9}],6:[function(require,module,exports){
 'use strict';
 
-var _rgbBinarize = require('../utils/rgb-binarize');
-
-function getGuid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  }
-  return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
-}
-
-function getImageData(component) {
-  var src = component.model.src;
-  var _component$labelingBo = component.labelingBounds;
-  var top = _component$labelingBo.top;
-  var left = _component$labelingBo.left;
-  var width = _component$labelingBo.width;
-  var height = _component$labelingBo.height;
-
-
-  width = Math.round(width);
-  height = Math.round(height);
-
-  var canvas;
-
-  if (typeof document == 'undefined') {
-    canvas = new Canvas(width, height);
-  } else {
-    canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-  }
-
-  var image = new Image();
-
-  var promise = new Promise(function (resolve, reject) {
-    image.onload = function () {
-      var context = canvas.getContext('2d');
-
-      context.drawImage(image, 0, 0, this.width, this.height, 0, 0, width, height);
-
-      var _context$getImageData = context.getImageData(0, 0, width, height);
-
-      var data = _context$getImageData.data;
-
-
-      var grf = getImageGrf(width, height, (0, _rgbBinarize.binarize)(width, height, data));
-
-      resolve(grf);
-    };
-
-    image.onerror = function (error) {
-      reject(error);
-    };
-  });
-
-  image.crossOrigin = "use-credentials";
-  image.src = component.app.url(src);
-
-  return promise;
-}
-
-function binToHex(nibble) {
-  return parseInt(nibble, 2).toString(16).toUpperCase() || '';
-}
-
-function getImageGrf(width, height, data) {
-
-  var grfData = "";
-  var bytesPerLine = Math.ceil(width / 8);
-
-  for (var y = 0; y < height; y++) {
-    var nibble = "";
-    var bytes = 0;
-
-    for (var x = 0; x < width; x++) {
-      nibble += data[4 * (width * y + x) + 1] == 0 ? '1' : '0';
-
-      if (nibble.length > 7) {
-        grfData += binToHex(nibble.substring(0, 4)) + binToHex(nibble.substring(4, 8));
-        nibble = "";
-        bytes++;
-      }
-    }
-
-    if (nibble.length > 0) {
-      while (nibble.length < 8) {
-        nibble += '0';
-      }grfData += binToHex(nibble.substring(0, 4)) + binToHex(nibble.substring(4, 8));
-      nibble = '';
-      bytes++;
-    }
-
-    while (bytes++ < bytesPerLine) {
-      grfData += binToHex('0000') + binToHex('0000');
-    }grfData += "\n";
-  }
-
-  return bytesPerLine * height + ',' + bytesPerLine + ',' + grfData;
-}
+var _toGrf = require('../utils/to-grf');
 
 scene.ImageView.prototype.toZpl = function (T) {
-  var _labelingBounds = this.labelingBounds;
-  var top = _labelingBounds.top;
-  var left = _labelingBounds.left;
+  var _this = this;
 
+  var src = this.model.src;
 
-  var self = this;
 
   return new Promise(function (resolve, reject) {
-    getImageData(self).then(function (grf) {
+    (0, _toGrf.getGrfCommand)(_this.labelingBounds, _this.app.url(src)).then(function (command) {
 
-      var guid = getGuid();
-      var commands = [['~DG' + guid, grf], ['^FO' + left, top], ['^XG' + 'R:' + guid, 1, 1], ['^PQ' + 1], ['^FS']];
-
-      var result = commands.map(function (command) {
-        return command.join(',');
-      }).join('\n') + '\n';
-
-      resolve(result);
+      resolve(command);
     }, function (error) {
+
       reject(error);
     });
   });
@@ -531,7 +459,7 @@ scene.ImageView.prototype.toZpl = function (T) {
 
 exports.Image = scene.ImageView;
 
-},{"../utils/rgb-binarize":10}],7:[function(require,module,exports){
+},{"../utils/to-grf":11}],7:[function(require,module,exports){
 'use strict';
 
 require('./rect');
@@ -543,13 +471,6 @@ scene.Component.prototype.toZplForLine = function (bounds, lineColor, borderThic
   var width = bounds.width;
   var height = bounds.height;
 
-  // if(orientation == 'L')
-  //   width -= borderThickness;
-  // else if(orientation == 'R')
-  //   width -= borderThickness * 2;
-  //
-  //
-  // borderThickness *= 2;
 
   var commands = [['^FO' + left, top], ['^GD' + width, height, borderThickness, lineColor, orientation], ['^FS']];
 
@@ -652,10 +573,10 @@ scene.Component.prototype.toZplForText = function (T) {
 
 
   var orientation = this.orientation;
-  var lineSpace = (this.lineHeight - this.fontSize) * this.labelingRatio;
+  var lineSpace = Math.round((this.lineHeight - this.fontSize) * this.labelingRatio);
   var text = T ? this.get('text') : this.text;
-  var charHeight = this.fontSize * this.labelingRatio;
-  var charWidth = this.fontSize * this.labelingRatio;
+  var charHeight = Math.round(this.fontSize * this.labelingRatio);
+  var charWidth = Math.round(this.fontSize * this.labelingRatio);
 
   var fontNo = config.fontNo || 'A';
 
@@ -815,4 +736,126 @@ function binarize(width, height, data) {
   return binarized;
 }
 
-},{}]},{},[2]);
+},{}],11:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getImageGrf = getImageGrf;
+exports.getGrfCommand = getGrfCommand;
+
+var _rgbBinarize = require('./rgb-binarize');
+
+function getGuid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+  return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
+}
+
+function binToHex(nibble) {
+  return parseInt(nibble, 2).toString(16).toUpperCase() || '';
+}
+
+function buildImageGrf(width, height, data) {
+
+  var grfData = "";
+  var bytesPerLine = Math.ceil(width / 8);
+
+  for (var y = 0; y < height; y++) {
+    var nibble = "";
+    var bytes = 0;
+
+    for (var x = 0; x < width; x++) {
+      nibble += data[4 * (width * y + x) + 1] == 0 ? '1' : '0';
+
+      if (nibble.length > 7) {
+        grfData += binToHex(nibble.substring(0, 4)) + binToHex(nibble.substring(4, 8));
+        nibble = "";
+        bytes++;
+      }
+    }
+
+    if (nibble.length > 0) {
+      while (nibble.length < 8) {
+        nibble += '0';
+      }grfData += binToHex(nibble.substring(0, 4)) + binToHex(nibble.substring(4, 8));
+      nibble = '';
+      bytes++;
+    }
+
+    while (bytes++ < bytesPerLine) {
+      grfData += binToHex('0000') + binToHex('0000');
+    }grfData += "\n";
+  }
+
+  return bytesPerLine * height + ',' + bytesPerLine + ',' + grfData;
+}
+
+function getImageGrf(width, height, src) {
+
+  var canvas;
+
+  if (typeof document == 'undefined') {
+    canvas = new Canvas(width, height);
+  } else {
+    canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+  }
+
+  var image = new Image();
+
+  var promise = new Promise(function (resolve, reject) {
+    image.onload = function () {
+      var context = canvas.getContext('2d');
+
+      console.log('image size, target size', this.width, this.height, width, height);
+      context.drawImage(image, 0, 0, this.width, this.height, 0, 0, width, height);
+
+      var _context$getImageData = context.getImageData(0, 0, width, height);
+
+      var data = _context$getImageData.data;
+
+
+      var grf = buildImageGrf(width, height, (0, _rgbBinarize.binarize)(width, height, data));
+
+      canvas.remove();
+
+      resolve(grf);
+    };
+
+    image.onerror = function (error) {
+      canvas.remove();
+
+      reject(error);
+    };
+  });
+
+  image.crossOrigin = "use-credentials";
+  image.src = src;
+
+  return promise;
+}
+
+function getGrfCommand(bounds, src) {
+  return new Promise(function (resolve, reject) {
+
+    getImageGrf(Math.round(bounds.width), Math.round(bounds.height), src).then(function (grf) {
+
+      var guid = getGuid();
+      var commands = [['~DG' + guid, grf], ['^FO' + Math.round(bounds.left), Math.round(bounds.top)], ['^XG' + 'R:' + guid, 1, 1], ['^PQ' + 1], ['^FS']];
+
+      var result = commands.map(function (command) {
+        return command.join(',');
+      }).join('\n') + '\n';
+
+      resolve(result);
+    }, function (error) {
+      reject(error);
+    });
+  });
+}
+
+},{"./rgb-binarize":10}]},{},[2]);

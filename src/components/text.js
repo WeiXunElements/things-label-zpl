@@ -18,10 +18,10 @@ scene.Component.prototype.toZplForText = function(T) {
   } = this.labelingTextBounds;
 
   var orientation = this.orientation;
-  var lineSpace = (this.lineHeight - this.fontSize) * this.labelingRatio;
+  var lineSpace = Math.round((this.lineHeight - this.fontSize) * this.labelingRatio);
   var text = T ? this.get('text') : this.text;
-  var charHeight = this.fontSize * this.labelingRatio;
-  var charWidth = this.fontSize * this.labelingRatio;
+  var charHeight = Math.round(this.fontSize * this.labelingRatio);
+  var charWidth = Math.round(this.fontSize * this.labelingRatio);
 
   var fontNo = config.fontNo || 'A';
 

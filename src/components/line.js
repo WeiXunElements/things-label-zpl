@@ -9,16 +9,8 @@ scene.Component.prototype.toZplForLine = function(bounds, lineColor, borderThick
     height
   } = bounds;
 
-  // if(orientation == 'L')
-  //   width -= borderThickness;
-  // else if(orientation == 'R')
-  //   width -= borderThickness * 2;
-  //
-  //
-  // borderThickness *= 2;
-
   var commands = [
-    ['^FO'+left, top],
+    ['^FO'+ left, top],
     ['^GD' + width, height, borderThickness, lineColor, orientation],
     ['^FS']
   ];
@@ -37,7 +29,7 @@ scene.Line.prototype._toZpl = function(T) {
     // 라인이 직선일 때에도 GB로직을 타며 테두리의 좌표값을 계산해 줘야 함.
     if(width == 0){
       bounds.left -= this.borderThickness / 2;
-      bounds.width += this.borderThickness /2;
+      bounds.width += this.borderThickness / 2;
     } else if(height == 0){
       bounds.top -= this.borderThickness / 2;
       bounds.height += this.borderThickness /2;

@@ -1,3 +1,5 @@
+import { getGrfCommand } from '../utils/to-grf'
+
 const ORIENTATION = {
   NORMAL: 'N',
   ROTATE_90: 'R',
@@ -16,29 +18,56 @@ var printerDPI = 203;
 Object.defineProperty(scene.Component.prototype, "labelingRatio", {
 
   get: function() {
-    var printerDPMM = printerDPI / 2.54 / 10;
+    var printerDPMM = printerDPI / 2.54 / 10; // mm 당 프린트 도트 갯수.
     var modelUnit = 0.1; // 모델링에서 사용된 수치값은 0.1mm 단위라는 뜻.
 
     return printerDPMM * modelUnit;
   }
 });
 
-scene.Scene.prototype.toZpl = function(T) {
+scene.Scene.prototype.toGRF = function() {
+
+  var bounds = this.root.bounds;
+  var ratio = this.root.labelingRatio;
+
+  bounds.left = Math.round(bounds.left * ratio);
+  bounds.top = Math.round(bounds.top * ratio);
+  bounds.width = Math.round(bounds.width * ratio);
+  bounds.height = Math.round(bounds.height * ratio);
+
+  return getGrfCommand(bounds, this.toDataURL(undefined, undefined, bounds.width, bounds.height));
+}
+
+scene.Scene.prototype.toZpl = function(T, I) {
 
   var labelWidth = Number(this.root.get('width')) / 100;
 
   return new Promise((resolve, reject) => {
-    this.root.toZpl(T).then(result => {
-      resolve([
-          '^XA',
-          '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n',
-          result,
-          '^XZ'
-        ].join('\n')
-      );
-    }, reason => {
-      reject(reason);
-    });
+    if(I) {
+      this.toGRF().then(result => {
+        resolve([
+            '^XA',
+            '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n',
+            result,
+            '^XZ'
+          ].join('\n')
+        );
+      }, reason => {
+        reject(reason);
+      });
+    } else {
+      this.root.toZpl(T).then(result => {
+        resolve([
+            '^XA',
+            '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n',
+            result,
+            '^XZ'
+          ].join('\n')
+        );
+      }, reason => {
+        reject(reason);
+      });
+    }
   });
 }
 
@@ -95,7 +124,7 @@ Object.defineProperty(scene.Component.prototype, "lineWidth", {
       lineWidth
     } = this.model;
 
-    return lineWidth * this.labelingRatio;;
+    return Math.round(lineWidth * this.labelingRatio);
   }
 });
 
@@ -113,9 +142,9 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
     } = this.labelingBounds;
 
     if(isBlackColor(fillStyle))
-      return Math.min(width, height) / 2;
+      return Math.round(Math.min(width, height) / 2);
     else
-      return lineWidth * this.labelingRatio;;
+      return Math.round(lineWidth * this.labelingRatio);
   }
 });
 
@@ -149,7 +178,12 @@ Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
     var width = Math.abs(p2.x - p1.x) * this.labelingRatio;
     var height = Math.abs(p2.y - p1.y) * this.labelingRatio;
 
-    return {left, top, width, height};
+    return {
+      left: Math.round(left),
+      top: Math.round(top),
+      width: Math.round(width),
+      height: Math.round(height)
+    };
   }
 });
 
@@ -172,7 +206,12 @@ Object.defineProperty(scene.Component.prototype, "labelingBounds", {
     var width = Math.abs(p2.x - p1.x) * this.labelingRatio;
     var height = Math.abs(p2.y - p1.y) * this.labelingRatio;
 
-    return {left, top, width, height};
+    return {
+      left: Math.round(left),
+      top: Math.round(top),
+      width: Math.round(width),
+      height: Math.round(height)
+    };
   }
 });
 
