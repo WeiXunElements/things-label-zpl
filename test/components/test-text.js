@@ -33,16 +33,16 @@ describe('Text', function () {
       model.textWrap = true;
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
-      var component = test_scene.findFirst('#target')
-      var result = parseZpl(component._toZpl())
+      var component = test_scene.findFirst('#target');
+      var result = parseZpl(component._toZpl());
+      var bounds = component.labelingBounds;
 
       expect(result[0].command).to.equal('FO');
-      expect(result[0].params[0]).to.equal(String(model.left));
-      expect(result[0].params[1]).to.equal(String(model.top));
+      expect(result[0].params[0]).to.equal(String(bounds.left));
+      expect(result[0].params[1]).to.equal(String(bounds.top));
       expect(result[1].command).to.equal('A');
       expect(result[2].command).to.equal('FB');
       expect(result[3].command).to.equal('FD');

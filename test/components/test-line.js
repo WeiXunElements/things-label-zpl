@@ -37,16 +37,16 @@ describe('Line', function () {
       model.y2 = 100;
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
+      var bounds = component.labelingBounds;
 
       expect(result[0].command).to.equal('FO');
-      expect(result[0].params[0]).to.equal(String(model.x1));
-      expect(result[0].params[1]).to.equal(String(model.y1));
+      expect(result[0].params[0]).to.equal(String(bounds.left));
+      expect(result[0].params[1]).to.equal(String(bounds.top - component.lineWidth / 2));
       expect(result[1].command).to.equal('GB');
       expect(result[2].command).to.equal('FS');
     });
@@ -59,16 +59,16 @@ describe('Line', function () {
       model.y2 = 200;
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target');
       var result = parseZpl(component._toZpl());
+      var bounds = component.labelingBounds;
 
       expect(result[0].command).to.equal('FO');
-      expect(result[0].params[0]).to.equal(String(100));
-      expect(result[0].params[1]).to.equal(String(100));
+      expect(result[0].params[0]).to.equal(String(bounds.left));
+      expect(result[0].params[1]).to.equal(String(bounds.top));
       expect(result[1].command).to.equal('GD');
       expect(result[1].params[4]).to.equal('R');
       expect(result[2].command).to.equal('FS');

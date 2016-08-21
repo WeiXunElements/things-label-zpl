@@ -47,7 +47,6 @@ describe('Component', function () {
 
     it('rotation이 없는 경우의 orientation은 "N" 이어야 한다.', function() {
       test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
@@ -60,7 +59,6 @@ describe('Component', function () {
       component_model.rotation = Math.PI * 2;
 
       test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
@@ -73,7 +71,6 @@ describe('Component', function () {
       component_model.rotation = Math.PI / 2 + 0.05;
 
       test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
@@ -87,7 +84,6 @@ describe('Component', function () {
       component_model.rotation = Math.PI / 2 + 0.05;
 
       test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
@@ -102,7 +98,6 @@ describe('Component', function () {
       component_model.rotation = Math.PI / 2 + 0.05;
 
       test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 

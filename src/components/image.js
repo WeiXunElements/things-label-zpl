@@ -8,7 +8,7 @@ scene.ImageView.prototype.toZpl = function(T) {
   return new Promise((resolve, reject) => {
     getGrfCommand(
       this.labelingBounds,
-      this.app.url(src)
+      typeof(src) === 'string' ? this.app.url(src) : src
     ).then(command => {
 
       resolve(command);

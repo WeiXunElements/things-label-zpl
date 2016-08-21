@@ -39,13 +39,12 @@ describe('Barcode', function () {
       model.text = '1234567890';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -61,13 +60,12 @@ describe('Barcode', function () {
       model.text = '1234567890';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -83,13 +81,12 @@ describe('Barcode', function () {
       model.text = '1234567890';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -105,13 +102,12 @@ describe('Barcode', function () {
       model.text = '1234567890';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -127,13 +123,12 @@ describe('Barcode', function () {
       model.text = '1234567890';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -149,13 +144,12 @@ describe('Barcode', function () {
       model.text = 'ABCDEFGHIJKLMNOP';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -171,13 +165,12 @@ describe('Barcode', function () {
       model.text = 'ABCDEFGHIJKLMNOP';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -193,13 +186,12 @@ describe('Barcode', function () {
       model.text = 'ABCDEFGHIJKLMNOP';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -215,13 +207,12 @@ describe('Barcode', function () {
       model.text = 'ABCDEFGHIJKLMNOP';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -237,13 +228,12 @@ describe('Barcode', function () {
       model.text = 'ABCDEFGHIJKLMNOP';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -259,13 +249,12 @@ describe('Barcode', function () {
       model.text = 'ABCDEFGHIJKLMNOP';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');
@@ -281,13 +270,12 @@ describe('Barcode', function () {
       model.text = 'http://hatiolab.com';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('BY');
       expect(result[1].command).to.equal('FO');

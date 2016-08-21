@@ -72,7 +72,7 @@ export function getImageGrf(width, height, src) {
 
       var grf = buildImageGrf(width, height, binarize(width, height, data));
 
-      canvas.remove();
+      typeof(document) !== 'undefined' && canvas.remove();
 
       resolve(grf);
     }

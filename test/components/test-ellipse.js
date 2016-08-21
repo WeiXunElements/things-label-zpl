@@ -36,13 +36,12 @@ describe('Ellipse', function () {
       model.rx = 100;
       model.ry = 100;
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('FO');
       expect(result[0].params[0]).to.equal(String(bounds.left));
@@ -54,49 +53,49 @@ describe('Ellipse', function () {
     it('rx와 ry가 다르면 GE 커맨드를 생성해야 한다.', function () {
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
-      var component = test_scene.findFirst('#target')
-      var result = parseZpl(component._toZpl())
+      var component = test_scene.findFirst('#target');
+      var result = parseZpl(component._toZpl());
+      var ratio = component.labelingRatio;
 
       expect(result[1].command).to.equal('GE');
-      expect(result[1].params[0]).to.equal(String(model.rx * 2));
-      expect(result[1].params[1]).to.equal(String(model.ry * 2));
+      expect(result[1].params[0]).to.equal(String(Math.round(model.rx * 2 * ratio)));
+      expect(result[1].params[1]).to.equal(String(Math.round(model.ry * 2 * ratio)));
     });
 
     it('fillStyle이 검은색이 아닌 경우 border-thickness는 모델의 lineWidth값을 반환한다.', function () {
       model.fillStyle = '#ffffff';
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
 
-      expect(result[1].params[2]).to.equal(String(model.lineWidth));
+      expect(result[1].params[2]).to.equal(String(component.lineWidth));
     });
 
     it('fillStyle이 검은색일 경우에는 border-thickness의 값은 rx와 ry중 작은값으로 변환한다.', function () {
       model.fillStyle = '#000000';
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
+      var ratio = component.labelingRatio;
 
-      expect(result[1].params[2]).to.equal(String(Math.min(model.rx, model.ry)));
+      expect(result[1].params[2]).to.equal(
+        String(Math.round(Math.min(model.rx * ratio, model.ry * ratio)))
+      );
     });
 
     it('fillStyle이 black이 아니며, strokeStyle이 white이면 line-color는 W로 변환되어야 한다.', function () {
       model.strokeStyle = 'white';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
@@ -110,7 +109,6 @@ describe('Ellipse', function () {
       model.strokeStyle = 'black';
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 

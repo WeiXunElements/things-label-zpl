@@ -34,13 +34,12 @@ describe('Rect', function () {
 
     it('GB 커맨드를 생성해야 한다.', function () {
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
-      var bounds = component.bounds
+      var bounds = component.labelingBounds
 
       expect(result[0].command).to.equal('FO');
       expect(result[0].params[0]).to.equal(String(bounds.left));
@@ -54,7 +53,6 @@ describe('Rect', function () {
       model.round = 100 // 최대치 100%
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
@@ -69,7 +67,6 @@ describe('Rect', function () {
       model.round = 50 // 최대치 100%
 
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
@@ -82,21 +79,19 @@ describe('Rect', function () {
     it('border-thickness는 fillStyle이 검은색이 아닐 때만, 3번째 파라미터로 변환되어야 한다.', function () {
       model.fillStyle = 'white'
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
 
-      expect(result[1].params[2]).to.equal(String(model.lineWidth));
+      expect(result[1].params[2]).to.equal(String(component.lineWidth));
     });
 
     it('fillStyle이 없을 때, strokeStyle이 흰색이면 W, 아니면 B 로 변환되어야 한다.', function () {
       model.fillStyle = '';
       model.strokeStyle = '#fff';
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
@@ -137,43 +132,43 @@ describe('Rect', function () {
     it('회전이 90이나 270도일 경우 width와 height의 값이 서로 바뀌어야 한다.', function () {
       model.rotation = Math.PI * 0.5;   // 90도
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
       var component = test_scene.findFirst('#target')
       var result = parseZpl(component._toZpl())
+      var bounds = component.labelingBounds;
 
-      expect(result[1].params[0]).to.equal(String(model.height));
-      expect(result[1].params[1]).to.equal(String(model.width));
+      expect(result[1].params[0]).to.equal(String(bounds.width));
+      expect(result[1].params[1]).to.equal(String(bounds.height));
     });
 
     it('border-thickness는 fillStyle이 검은색일 때, 90과 270도 일때는 width와 height중 작은 값의 절반이 되어야 한다.', function () {
       model.fillStyle = 'black'
       model.rotation = Math.PI * 0.5;  // 90도
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
-      var component = test_scene.findFirst('#target')
-      var result = parseZpl(component._toZpl())
+      var component = test_scene.findFirst('#target');
+      var result = parseZpl(component._toZpl());
+      var bounds = component.labelingBounds;
 
-      expect(result[1].params[2]).to.equal(String(Math.min(model.width, model.height)/2));
+      expect(result[1].params[2]).to.equal(String(Math.min(bounds.width, bounds.height)/2));
     });
 
     it('border-thickness는 fillStyle이 검은색일 때, 0과 180도 일때는 width와 height중 작은 값의 절반이 되어야 한다.', function () {
       model.fillStyle = 'black'
       model.rotation = Math.PI * 1;  // 180도
       var test_scene = scene.create({
-        target: {style:{}},
         model: scene_model
       });
 
-      var component = test_scene.findFirst('#target')
-      var result = parseZpl(component._toZpl())
+      var component = test_scene.findFirst('#target');
+      var result = parseZpl(component._toZpl());
+      var bounds = component.labelingBounds;
 
-      expect(result[1].params[2]).to.equal(String(Math.min(model.width, model.height)/2));
+      expect(result[1].params[2]).to.equal(String(Math.min(bounds.width, bounds.height)/2));
     });
 
   });

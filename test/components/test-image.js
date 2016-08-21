@@ -40,7 +40,7 @@ describe('Image', function () {
 
     it('~DG 커맨드로 이미지를 등록하고, ^XG 커맨드로 이미지를 그려야 한다.', function (done) {
 
-      fs.readFile(__dirname + '/../images/logo.png', function(err, buffer){
+      fs.readFile(__dirname + '/' + '../images/logo.png', function(err, buffer){
         if (err) {
           console.error(err);
 
@@ -51,7 +51,6 @@ describe('Image', function () {
         model.src = buffer;
 
         var test_scene = scene.create({
-          target: {style:{}},
           model: scene_model
         });
 

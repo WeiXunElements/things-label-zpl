@@ -27,10 +27,10 @@ scene.Line.prototype._toZpl = function(T) {
   if(bounds.width < 0.5 || bounds.height < 0.5) {
 
     // 라인이 직선일 때에도 GB로직을 타며 테두리의 좌표값을 계산해 줘야 함.
-    if(width == 0){
+    if(bounds.width == 0){
       bounds.left -= this.borderThickness / 2;
       bounds.width += this.borderThickness / 2;
-    } else if(height == 0){
+    } else if(bounds.height == 0){
       bounds.top -= this.borderThickness / 2;
       bounds.height += this.borderThickness /2;
     }

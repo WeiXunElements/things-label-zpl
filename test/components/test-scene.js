@@ -135,7 +135,6 @@ describe('ZPL Builder', function () {
 
     it('GB 커맨드를 생성해야 한다.', function (done) {
       var test_scene = scene.create({
-        target: {style:{}},
         model
       });
 
