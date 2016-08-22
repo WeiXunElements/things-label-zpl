@@ -2,7 +2,7 @@ var config = require('../../config').config
 
 const MAX_NUMBER_OF_LINES = 100;
 
-scene.Component.prototype.toZplForText = function(T) {
+scene.Component.prototype.toZplForText = function(T, I) {
 
   var {
     textWrap,
@@ -71,9 +71,9 @@ scene.Component.prototype.toZplForText = function(T) {
   }).join('\n') + '\n';
 }
 
-scene.Text.prototype._toZpl = function(T) {
+scene.Text.prototype._toZpl = function(T, I) {
 
-  return this.toZplForText(T)
+  return this.toZplForText(T, I)
 }
 
 exports.Text = scene.Text;

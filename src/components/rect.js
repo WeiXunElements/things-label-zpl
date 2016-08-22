@@ -19,7 +19,7 @@ scene.Component.prototype.toZplForRect = function(bounds, lineColor, borderThick
   }).join('\n') + '\n';
 };
 
-scene.Rect.prototype._toZpl = function(T) {
+scene.Rect.prototype._toZpl = function(T, I) {
   var {
     round = 0
   } = this.model
@@ -33,7 +33,7 @@ scene.Rect.prototype._toZpl = function(T) {
 
   // build text command
   if((T ? this.get('text') : this.text))
-    zpl += this.toZplForText(T);
+    zpl += this.toZplForText(T, I);
 
   return zpl;
 }

@@ -1,6 +1,6 @@
 import { getGrfCommand } from '../utils/to-grf'
 
-scene.ImageView.prototype.toZpl = function(T) {
+scene.ImageView.prototype.toZpl = function(T, I) {
   var {
     src
   } = this.model;

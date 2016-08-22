@@ -1,5 +1,7 @@
 import { getGrfCommand } from '../utils/to-grf'
 
+import { beforeDraw, afterDraw } from './interceptors'
+
 const ORIENTATION = {
   NORMAL: 'N',
   ROTATE_90: 'R',
@@ -41,23 +43,9 @@ scene.Scene.prototype.toGRF = function() {
 }
 
 // 이 API는 위의 toGRF로 통합될 예정임.
-scene.Scene.prototype.toTemplateGRF = function() {
+scene.Scene.prototype.toTemplateGRF = function(T) {
 
-  // 1. Scene의 바운드를 구한다.
-  var {
-    left,
-    top,
-    width,
-    height
-  } = this.root.bounds;
-  var ratio = this.root.labelingRatio;
-
-  var print_left = Math.round(left * ratio);
-  var print_top = Math.round(top * ratio);
-  var print_width = Math.round(width * ratio);
-  var print_height = Math.round(height * ratio);
-
-  // 2. pending 객체를 만든다.
+  // 1. pending 객체를 만든다.
 
   var pending = {
     promise: [],
@@ -69,56 +57,77 @@ scene.Scene.prototype.toTemplateGRF = function() {
     }
   };
 
-  // 3. Scene의 바운드에 근거하여, 오프스크린 캔바스를 만들고, 프린트 높이/폭만큼 캔바스의 크기를 설정한다.
+  // 2. scene의 모든 컴포넌트에 대해서 prepare(resolve, reject)와 prepareFill(resolve, reject)를 호출한다.
+  // ... traverse => pending promises를 채운다.
 
-  var canvas = document.createElement("canvas");
-
-  canvas.width = print_width * scene.DPPX;
-  canvas.height = print_height * scene.DPPX;
-
-  // 4. 모델레이어의 원래 위치와 스케일을 저장한다.
-  var translate = this.model_layer.get('translate');
-  var scale = this.model_layer.get('scale');
-
-  this.model_layer.set('translate', {x: 0, y: 0});
-  this.model_layer.set('scale', {x: print_width / width, y: print_height / height});
-
-  // 5. 오프스크린 캔바스의 Context2D를 구한뒤, 모델레이어를 그 위에 그린다.
-  //    이 때, 위에서 준비한 펜딩객체를 넘겨준다.
-  var context = canvas.getContext('2d');
-  this.model_layer.draw(context, pending);
-
+  // 3. 최종 promise 객체를 넘긴다.
   return new Promise((resolve, reject) => {
-    var promises = this.components.map(component => {
-      return component.toZpl(T);
-    });
 
-    // 6. pending 객체가 다 완료되면, 해당 컨텍스트에 다시한번 그린다. 이 때는 펜딩객체는 필요없다.
+    // 4. pending 객체가 다 완료되면, 해당 컨텍스트에 다시한번 그린다. 이 때는 펜딩객체는 필요없다.
     //    그런 다음. GRF 이미지를 구하고, 모델레이어의 원래 위치와 스케일로 되돌린다.
     Promise.all(pending.promises).then(results => {
 
-      scene.root.draw(context);
+      // 5. Scene의 바운드를 구한다.
+      var {
+        left,
+        top,
+        width,
+        height
+      } = this.root.bounds;
+      var ratio = this.root.labelingRatio;
+
+      var print_left = Math.round(left * ratio);
+      var print_top = Math.round(top * ratio);
+      var print_width = Math.round(width * ratio);
+      var print_height = Math.round(height * ratio);
+
+      // 3. Scene의 바운드에 근거하여, 오프스크린 캔바스를 만들고, 프린트 높이/폭만큼 캔바스의 크기를 설정한다.
+
+      var canvas = scene.Component.createCanvas(print_width * scene.DPPX, print_height * scene.DPPX);
+
+      // 4. 모델레이어의 원래 위치와 스케일을 저장한다.
+      var translate = this.model_layer.get('translate');
+      var scale = this.model_layer.get('scale');
+
+      this.model_layer.set('translate', {x: 0, y: 0});
+      this.model_layer.set('scale', {x: print_width / width, y: print_height / height});
+
+      // 5. 오프스크린 캔바스의 Context2D를 구한뒤, 모델레이어를 그 위에 그린다.
+      //    이 때, 위에서 준비한 펜딩객체를 넘겨준다.
+      var context = canvas.getContext('2d');
+
+      beforeDraw(T); // 그려야 할 것들만 그린다.
+      this.root.draw(context);
+      afterDraw(T);
 
       this.model_layer.set('translate', translate);
       this.model_layer.set('scale', scale);
 
-      canvas.remove();
-
-      var command = getGrfCommand({
+      var backgroundGRFcommand = getGrfCommand({
         left: print_left,
         top: print_top,
         width: print_width,
         height: print_height
       }, canvas.toDataURL());
 
-      resolve(command)
+      var promises = this.components.map(component => {
+        return component.toZpl(T, true); // [T]emplate, [I]mage 파라미터를 패스한다.
+      });
+
+      Promises.all(promises).then(results => {
+
+        resolve(backgroundGRFcommand + '\n\n' + results.join('\n'));
+
+      }, error => {
+
+        reject(error);
+
+      })
     }, error => {
       console.error(error);
 
       this.model_layer.set('translate', translate);
       this.model_layer.set('scale', scale);
-
-      canvas.remove();
 
       reject(error);
     });
@@ -143,7 +152,7 @@ scene.Scene.prototype.toZpl = function(T, I) {
         reject(reason);
       });
     } else {
-      this.root.toZpl(T).then(result => {
+      this.root.toZpl(T, I).then(result => {
         resolve([
             '^XA',
             '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n',
@@ -158,11 +167,11 @@ scene.Scene.prototype.toZpl = function(T, I) {
   });
 }
 
-scene.Component.prototype.toZpl = function(T) {
+scene.Component.prototype.toZpl = function(T, I) {
 
   return new Promise((resolve, reject) => {
     try {
-      resolve(this._toZpl(T))
+      resolve(this._toZpl(T, I))
     } catch(error) {
       reject(error);
     }

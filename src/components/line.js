@@ -20,7 +20,7 @@ scene.Component.prototype.toZplForLine = function(bounds, lineColor, borderThick
   }).join('\n') + '\n';
 };
 
-scene.Line.prototype._toZpl = function(T) {
+scene.Line.prototype._toZpl = function(T, I) {
   var bounds = this.labelingBounds;
   var zpl;
 
@@ -60,7 +60,7 @@ scene.Line.prototype._toZpl = function(T) {
 
   // build text command
   if((T ? this.get('text') : this.text))
-    zpl += this.toZplForText(T);
+    zpl += this.toZplForText(T, I);
 
   return zpl;
 }

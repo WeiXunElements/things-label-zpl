@@ -1,6 +1,6 @@
 var config = require('../../config').config
 
-scene.Barcode.prototype._toZpl = function(T) {
+scene.Barcode.prototype._toZpl = function(T, I) {
 	var {
 		symbol,
 		scale_w = 1,
