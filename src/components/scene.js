@@ -111,7 +111,13 @@ scene.Scene.prototype.toTemplateGRF = function(T) {
   });
 }
 
-scene.Scene.prototype.toZpl = function(T, I) {
+scene.Scene.prototype.toZpl = function(T, I, dpi) {
+
+  /* 기본 DPI를 저장. 완료후에 복구. */
+  var origin_dpi = config.dpi;
+
+  if(dpi)
+    config.dpi = dpi;
 
   var labelWidth = Number(this.root.get('width')) / 100;
 
@@ -125,8 +131,12 @@ scene.Scene.prototype.toZpl = function(T, I) {
             '^XZ'
           ].join('\n')
         );
+
+        config.dpi = origin_dpi;
       }, reason => {
         reject(reason);
+
+        config.dpi = origin_dpi;
       });
 
     } else { // ZPL 타입인 경우.
@@ -138,8 +148,12 @@ scene.Scene.prototype.toZpl = function(T, I) {
             '^XZ'
           ].join('\n')
         );
+
+        config.dpi = origin_dpi;
       }, reason => {
         reject(reason);
+
+        config.dpi = origin_dpi;
       });
     }
   });

@@ -758,8 +758,13 @@ scene.Scene.prototype.toTemplateGRF = function (T) {
   });
 };
 
-scene.Scene.prototype.toZpl = function (T, I) {
+scene.Scene.prototype.toZpl = function (T, I, dpi) {
   var _this2 = this;
+
+  /* 기본 DPI를 저장. 완료후에 복구. */
+  var origin_dpi = config.dpi;
+
+  if (dpi) config.dpi = dpi;
 
   var labelWidth = Number(this.root.get('width')) / 100;
 
@@ -768,15 +773,23 @@ scene.Scene.prototype.toZpl = function (T, I) {
       // 이미지(GRF) 타입인 경우.
       _this2.toTemplateGRF(T).then(function (result) {
         resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * config.dpi) + '\n', result, '^XZ'].join('\n'));
+
+        config.dpi = origin_dpi;
       }, function (reason) {
         reject(reason);
+
+        config.dpi = origin_dpi;
       });
     } else {
       // ZPL 타입인 경우.
       _this2.root.toZpl(T, I).then(function (result) {
         resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * config.dpi) + '\n', result, '^XZ'].join('\n'));
+
+        config.dpi = origin_dpi;
       }, function (reason) {
         reject(reason);
+
+        config.dpi = origin_dpi;
       });
     }
   });
