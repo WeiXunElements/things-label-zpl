@@ -124,9 +124,11 @@ scene.Scene.prototype.toZpl = function(T, I, dpi) {
   return new Promise((resolve, reject) => {
     if(I) { // 이미지(GRF) 타입인 경우.
       this.toTemplateGRF(T).then(result => {
+        let widthInDots = Math.round(labelWidth / 2.54 * config.dpi);
+
         resolve([
             '^XA',
-            '^PW' + Math.round(labelWidth / 2.54 * config.dpi) + '\n',
+            '^PW' + widthInDots + '\n',
             result,
             '^XZ'
           ].join('\n')
@@ -141,9 +143,11 @@ scene.Scene.prototype.toZpl = function(T, I, dpi) {
 
     } else { // ZPL 타입인 경우.
       this.root.toZpl(T, I).then(result => {
+        let widthInDots = Math.round(labelWidth / 2.54 * config.dpi);
+
         resolve([
             '^XA',
-            '^PW' + Math.round(labelWidth / 2.54 * config.dpi) + '\n',
+            '^PW' + widthInDots + '\n',
             result,
             '^XZ'
           ].join('\n')

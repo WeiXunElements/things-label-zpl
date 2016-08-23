@@ -772,7 +772,9 @@ scene.Scene.prototype.toZpl = function (T, I, dpi) {
     if (I) {
       // 이미지(GRF) 타입인 경우.
       _this2.toTemplateGRF(T).then(function (result) {
-        resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * config.dpi) + '\n', result, '^XZ'].join('\n'));
+        var widthInDots = Math.round(labelWidth / 2.54 * config.dpi);
+
+        resolve(['^XA', '^PW' + widthInDots + '\n', result, '^XZ'].join('\n'));
 
         config.dpi = origin_dpi;
       }, function (reason) {
@@ -783,7 +785,9 @@ scene.Scene.prototype.toZpl = function (T, I, dpi) {
     } else {
       // ZPL 타입인 경우.
       _this2.root.toZpl(T, I).then(function (result) {
-        resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * config.dpi) + '\n', result, '^XZ'].join('\n'));
+        var widthInDots = Math.round(labelWidth / 2.54 * config.dpi);
+
+        resolve(['^XA', '^PW' + widthInDots + '\n', result, '^XZ'].join('\n'));
 
         config.dpi = origin_dpi;
       }, function (reason) {
