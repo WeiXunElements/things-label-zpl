@@ -20,6 +20,11 @@ scene.Component.prototype.toZplForRect = function(bounds, lineColor, borderThick
 };
 
 scene.Rect.prototype._toZpl = function(T, I) {
+
+  /* 이미지 타입이면, ZPL을 생성하지 않고 리턴한다. */
+  if(I)
+    return;
+
   var {
     round = 0
   } = this.model

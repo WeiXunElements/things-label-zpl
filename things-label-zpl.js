@@ -20,7 +20,9 @@ require('./src/components/line');
 require('./src/components/image');
 require('./src/components/barcode');
 
-},{"./src/components/barcode":3,"./src/components/component":4,"./src/components/ellipse":5,"./src/components/image":6,"./src/components/line":7,"./src/components/rect":8,"./src/components/text":9}],3:[function(require,module,exports){
+require('./src/components/scene');
+
+},{"./src/components/barcode":3,"./src/components/component":4,"./src/components/ellipse":5,"./src/components/image":6,"./src/components/line":10,"./src/components/rect":11,"./src/components/scene":12,"./src/components/text":13}],3:[function(require,module,exports){
 'use strict';
 
 var config = require('../../config').config;
@@ -30,9 +32,9 @@ var scale_ratio = {
   'code128': [0.5, 1]
 };
 
-var TWO_D_BARCODES = ['qrcode', 'pdf417', 'micropdf417'];
+var TWO_D_BARCODES = ['qrcode', 'pdf417', 'micropdf417', 'datamatrix', 'maxicode', 'code49'];
 
-scene.Barcode.prototype._toZpl = function (T) {
+scene.Barcode.prototype._toZpl = function (T, I) {
   var _model = this.model;
   var symbol = _model.symbol;
   var _model$scale_w = _model.scale_w;
@@ -69,8 +71,7 @@ scene.Barcode.prototype._toZpl = function (T) {
   commands.push(['^BY' + barWidth, barRatio, barHeight]);
   commands.push(['^FO' + left, top]);
 
-  if (showText && !TWO_D_BARCODES.includes(symbol)) {
-    console.log('if in');
+  if (showText && TWO_D_BARCODES.indexOf(symbol) == -1) {
     barHeight -= scale_w * 6 + 8; // barcode 높이는 문자 뺀 다음의 높이임.
   }
 
@@ -159,8 +160,6 @@ scene.Barcode.prototype._toZpl = function (T) {
       break;
     case 'qrcode':
 
-      // 크기가 안맞음
-
       /*
        * ^BQa,b,c
        * @a field position - Accepted Values: Rotation is not supported.
@@ -192,9 +191,13 @@ scene.Barcode.prototype._toZpl = function (T) {
 
   if (symbol === 'qrcode') {
     commands.push(['^FDQ', 'A' + text]);
-  } else {
+    commands.push(['^FS']);
+  } else if (symbol === 'code39') {
     // ^FS가 텍스트와 같은 줄에 있지 않으면 텍스트가 나오지 않는 바코드가 있음(ex : code39)
     commands.push(['^FD' + text + '^FS']);
+  } else {
+    commands.push(['^FD' + text]);
+    commands.push(['^FS']);
   }
 
   var zpl = commands.map(function (command) {
@@ -209,7 +212,7 @@ exports.Barcode = scene.Barcode;
 },{"../../config":1}],4:[function(require,module,exports){
 'use strict';
 
-var _toGrf = require('../utils/to-grf');
+var config = require('../../config').config;
 
 var ORIENTATION = {
   NORMAL: 'N',
@@ -222,59 +225,12 @@ function isBlackColor(color) {
   return color === 'black' || color === '#000' || color === '#000000';
 }
 
-var printerDPI = 203;
-
-Object.defineProperty(scene.Component.prototype, "labelingRatio", {
-
-  get: function get() {
-    var printerDPMM = printerDPI / 2.54 / 10; // mm 당 프린트 도트 갯수.
-    var modelUnit = 0.1; // 모델링에서 사용된 수치값은 0.1mm 단위라는 뜻.
-
-    return printerDPMM * modelUnit;
-  }
-});
-
-scene.Scene.prototype.toGRF = function () {
-
-  var bounds = this.root.bounds;
-  var ratio = this.root.labelingRatio;
-
-  bounds.left = Math.round(bounds.left * ratio);
-  bounds.top = Math.round(bounds.top * ratio);
-  bounds.width = Math.round(bounds.width * ratio);
-  bounds.height = Math.round(bounds.height * ratio);
-
-  return (0, _toGrf.getGrfCommand)(bounds, this.toDataURL(undefined, undefined, bounds.width, bounds.height));
-};
-
-scene.Scene.prototype.toZpl = function (T, I) {
+scene.Component.prototype.toZpl = function (T, I) {
   var _this = this;
-
-  var labelWidth = Number(this.root.get('width')) / 100;
-
-  return new Promise(function (resolve, reject) {
-    if (I) {
-      _this.toGRF().then(function (result) {
-        resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n', result, '^XZ'].join('\n'));
-      }, function (reason) {
-        reject(reason);
-      });
-    } else {
-      _this.root.toZpl(T).then(function (result) {
-        resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * printerDPI) + '\n', result, '^XZ'].join('\n'));
-      }, function (reason) {
-        reject(reason);
-      });
-    }
-  });
-};
-
-scene.Component.prototype.toZpl = function (T) {
-  var _this2 = this;
 
   return new Promise(function (resolve, reject) {
     try {
-      resolve(_this2._toZpl(T));
+      resolve(_this._toZpl(T, I));
     } catch (error) {
       reject(error);
     }
@@ -287,20 +243,32 @@ scene.Component.prototype.toZpl = function (T) {
  * @return promise ZPL 결과를 반환하기 위한 promise 객체
  */
 scene.Container.prototype.toZpl = function (T) {
-  var _this3 = this;
+  var _this2 = this;
 
   return new Promise(function (resolve, reject) {
-    var promises = _this3.components.map(function (component) {
+    var promises = _this2.components.map(function (component) {
       return component.toZpl(T);
     });
 
     Promise.all(promises).then(function (results) {
-      resolve(results.join('\n'));
+      resolve(results.filter(function (result) {
+        return !!result;
+      }).join('\n'));
     }, function (error) {
       reject(error);
     });
   });
 };
+
+Object.defineProperty(scene.Component.prototype, "labelingRatio", {
+
+  get: function get() {
+    var printerDPMM = config.dpi / 2.54 / 10; // mm 당 프린트 도트 갯수.
+    var modelUnit = 0.1; // 모델링에서 사용된 수치값은 0.1mm 단위라는 뜻.
+
+    return printerDPMM * modelUnit;
+  }
+});
 
 Object.defineProperty(scene.Component.prototype, "lineColor", {
 
@@ -434,7 +402,7 @@ Object.defineProperty(scene.Component.prototype, "orientation", {
 
 exports.Component = scene.Component;
 
-},{"../utils/to-grf":11}],5:[function(require,module,exports){
+},{"../../config":1}],5:[function(require,module,exports){
 'use strict';
 
 require('./text');
@@ -457,31 +425,37 @@ scene.Component.prototype.toZplForEllipse = function (bounds, lineColor, borderT
   }).join('\n') + '\n';
 };
 
-scene.Ellipse.prototype._toZpl = function (T) {
+scene.Ellipse.prototype._toZpl = function (T, I) {
+
+  /* 이미지 타입이면, ZPL을 생성하지 않고 리턴한다. */
+  if (I) return;
 
   var zpl = this.toZplForEllipse(this.labelingBounds, this.lineColor, this.borderThickness);
 
   // build text command
-  if (T ? this.get('text') : this.text) zpl += this.toZplForText(T);
+  if (T ? this.get('text') : this.text) zpl += this.toZplForText(T, I);
 
   return zpl;
 };
 
 exports.Ellipse = scene.Ellipse;
 
-},{"./text":9}],6:[function(require,module,exports){
+},{"./text":13}],6:[function(require,module,exports){
 'use strict';
 
 var _toGrf = require('../utils/to-grf');
 
-scene.ImageView.prototype.toZpl = function (T) {
+scene.ImageView.prototype.toZpl = function (T, I) {
   var _this = this;
+
+  /* 이미지 타입이면, ZPL을 생성하지 않고 리턴한다. */
+  if (I) return;
 
   var src = this.model.src;
 
 
   return new Promise(function (resolve, reject) {
-    (0, _toGrf.getGrfCommand)(_this.labelingBounds, _this.app.url(src)).then(function (command) {
+    (0, _toGrf.getGrfCommand)(_this.labelingBounds, typeof src === 'string' ? _this.app.url(src) : src).then(function (command) {
 
       resolve(command);
     }, function (error) {
@@ -493,7 +467,79 @@ scene.ImageView.prototype.toZpl = function (T) {
 
 exports.Image = scene.ImageView;
 
-},{"../utils/to-grf":11}],7:[function(require,module,exports){
+},{"../utils/to-grf":16}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.drawBarcodeBefore = drawBarcodeBefore;
+exports.drawBarcodeAfter = drawBarcodeAfter;
+var original_draw = scene.Barcode.prototype.draw;
+
+function drawBarcodeBefore() {
+  // 바코드는 GRF 이미지를 그릴 때 무조건 스킵한다.
+  scene.Barcode.prototype.draw = function (context) {
+    return;
+  };
+}
+
+function drawBarcodeAfter() {
+  scene.Barcode.prototype.draw = original_draw;
+}
+
+},{}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.drawTextBefore = drawTextBefore;
+exports.drawTextAfter = drawTextAfter;
+
+var _hasVariables = require('../../utils/has-variables');
+
+var original_drawText = scene.Component.prototype.drawText;
+
+function drawTextBefore() {
+  scene.Component.prototype.drawText = function (context) {
+    if ((0, _hasVariables.hasVariables)(this.get('text'))) return;
+    return original_drawText.call(this, context);
+  };
+}
+
+function drawTextAfter() {
+  scene.Component.prototype.drawText = original_drawText;
+}
+
+},{"../../utils/has-variables":14}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.beforeDraw = beforeDraw;
+exports.afterDraw = afterDraw;
+
+var _drawText = require('./draw-text');
+
+var _barcodeDraw = require('./barcode-draw');
+
+function beforeDraw(T) {
+  if (T) // [T]emplate화 하는 경우에만, drawText를 인터셉트한다.
+    (0, _drawText.drawTextBefore)();
+
+  (0, _barcodeDraw.drawBarcodeBefore)();
+}
+
+function afterDraw(T) {
+  (0, _barcodeDraw.drawBarcodeAfter)();
+
+  if (T) // [T]emplate화 하는 경우에만, drawText 인터셉트를 복구한다.
+    (0, _drawText.drawTextAfter)();
+}
+
+},{"./barcode-draw":7,"./draw-text":8}],10:[function(require,module,exports){
 'use strict';
 
 require('./rect');
@@ -513,17 +559,20 @@ scene.Component.prototype.toZplForLine = function (bounds, lineColor, borderThic
   }).join('\n') + '\n';
 };
 
-scene.Line.prototype._toZpl = function (T) {
+scene.Line.prototype._toZpl = function (T, I) {
+  /* 이미지 타입이면, ZPL을 생성하지 않고 리턴한다. */
+  if (I) return;
+
   var bounds = this.labelingBounds;
   var zpl;
 
   if (bounds.width < 0.5 || bounds.height < 0.5) {
 
     // 라인이 직선일 때에도 GB로직을 타며 테두리의 좌표값을 계산해 줘야 함.
-    if (width == 0) {
+    if (bounds.width == 0) {
       bounds.left -= this.borderThickness / 2;
       bounds.width += this.borderThickness / 2;
-    } else if (height == 0) {
+    } else if (bounds.height == 0) {
       bounds.top -= this.borderThickness / 2;
       bounds.height += this.borderThickness / 2;
     }
@@ -546,14 +595,14 @@ scene.Line.prototype._toZpl = function (T) {
   }
 
   // build text command
-  if (T ? this.get('text') : this.text) zpl += this.toZplForText(T);
+  if (T ? this.get('text') : this.text) zpl += this.toZplForText(T, I);
 
   return zpl;
 };
 
 exports.Line = scene.Line;
 
-},{"./rect":8,"./text":9}],8:[function(require,module,exports){
+},{"./rect":11,"./text":13}],11:[function(require,module,exports){
 'use strict';
 
 require('./text');
@@ -572,7 +621,11 @@ scene.Component.prototype.toZplForRect = function (bounds, lineColor, borderThic
   }).join('\n') + '\n';
 };
 
-scene.Rect.prototype._toZpl = function (T) {
+scene.Rect.prototype._toZpl = function (T, I) {
+
+  /* 이미지 타입이면, ZPL을 생성하지 않고 리턴한다. */
+  if (I) return;
+
   var _model$round = this.model.round;
   var round = _model$round === undefined ? 0 : _model$round;
 
@@ -580,21 +633,171 @@ scene.Rect.prototype._toZpl = function (T) {
   var zpl = this.toZplForRect(this.labelingBounds, this.lineColor, this.borderThickness, round);
 
   // build text command
-  if (T ? this.get('text') : this.text) zpl += this.toZplForText(T);
+  if (T ? this.get('text') : this.text) zpl += this.toZplForText(T, I);
 
   return zpl;
 };
 
 exports.Rect = scene.Rect;
 
-},{"./text":9}],9:[function(require,module,exports){
+},{"./text":13}],12:[function(require,module,exports){
 'use strict';
+
+var _toGrf = require('../utils/to-grf');
+
+var _interceptors = require('./interceptors');
+
+var config = require('../../config').config;
+
+/**
+ * 이미지 기반의 ZPL 커맨드를 만드는 메쏘드이다.
+ * 내부 컴포넌트 중에서 바코드 라벨과 변수화된 텍스트를 제외하고는 모두 GRF 이미지로 만들어진다.
+ */
+scene.Scene.prototype.toGRF = function () {
+
+  var bounds = this.root.bounds;
+  var ratio = this.root.labelingRatio;
+
+  bounds.width = Math.round(bounds.width * ratio);
+  bounds.height = Math.round(bounds.height * ratio);
+
+  return (0, _toGrf.getGrfCommand)(bounds, this.toDataURL(undefined, undefined, bounds.width, bounds.height));
+};
+
+// 이 API는 위의 toGRF로 통합될 예정임.
+scene.Scene.prototype.toTemplateGRF = function (T) {
+  var _this = this;
+
+  // 1. pending 객체를 만든다.
+
+  var pendings = [];
+
+  // 2. scene의 모든 컴포넌트에 대해서 prepare(resolve, reject)와 prepareFill(resolve, reject)를 호출한다.
+  // ... traverse => pending promises를 채운다.
+  this.root.forEach(function (component) {
+    pendings.push(new Promise(function (resolve, reject) {
+      component.prepare(resolve, reject);
+    }));
+
+    pendings.push(new Promise(function (resolve, reject) {
+      component.prepareFill(resolve, reject);
+    }));
+  }, this);
+
+  // 3. 최종 promise 객체를 넘긴다.
+  return new Promise(function (resolve, reject) {
+
+    // 4. pending 객체가 다 완료되면, 해당 컨텍스트에 다시한번 그린다. 이 때는 펜딩객체는 필요없다.
+    //    그런 다음. GRF 이미지를 구하고, 모델레이어의 원래 위치와 스케일로 되돌린다.
+    Promise.all(pendings).then(function (results) {
+
+      // 5. Scene의 바운드를 구한다.
+      var _root$bounds = _this.root.bounds;
+      var left = _root$bounds.left;
+      var top = _root$bounds.top;
+      var width = _root$bounds.width;
+      var height = _root$bounds.height;
+
+      var ratio = _this.root.labelingRatio;
+
+      var print_left = Math.round(left * ratio);
+      var print_top = Math.round(top * ratio);
+      var print_width = Math.round(width * ratio);
+      var print_height = Math.round(height * ratio);
+
+      // 3. Scene의 바운드에 근거하여, 오프스크린 캔바스를 만들고, 프린트 높이/폭만큼 캔바스의 크기를 설정한다.
+      var canvas = scene.Component.createCanvas(print_width * scene.DPPX, print_height * scene.DPPX);
+
+      // 4. 모델레이어의 원래 위치와 스케일을 저장한다.
+      var translate = _this.root.get('translate');
+      var scale = _this.root.get('scale');
+
+      _this.root.set('translate', { x: 0, y: 0 });
+      _this.root.set('scale', { x: print_width / width, y: print_height / height });
+
+      // 5. 오프스크린 캔바스의 Context2D를 구한뒤, 모델레이어를 그 위에 그린다.
+      //    이 때, 위에서 준비한 펜딩객체를 넘겨준다.
+      var context = canvas.getContext('2d');
+
+      (0, _interceptors.beforeDraw)(T); // 그려야 할 것들만 그린다.
+      _this.root.draw(context);
+      (0, _interceptors.afterDraw)(T);
+
+      _this.root.set('translate', translate);
+      _this.root.set('scale', scale);
+
+      var promises = [];
+
+      promises.push((0, _toGrf.getGrfCommand)({
+        left: print_left,
+        top: print_top,
+        width: print_width,
+        height: print_height
+      }, canvas.toDataURL()));
+
+      if (T) {
+        _this.root.components.forEach(function (component) {
+          promises.push(component.toZpl(T, true)); // [T]emplate, [I]mage 파라미터를 패스한다.
+        });
+      }
+
+      Promise.all(promises).then(function (results) {
+
+        resolve(results.filter(function (result) {
+          return !!result;
+        }).join('\n'));
+      }, function (error) {
+
+        reject(error);
+      });
+    }, function (error) {
+      console.error(error);
+
+      reject(error);
+    });
+  });
+};
+
+scene.Scene.prototype.toZpl = function (T, I) {
+  var _this2 = this;
+
+  var labelWidth = Number(this.root.get('width')) / 100;
+
+  return new Promise(function (resolve, reject) {
+    if (I) {
+      // 이미지(GRF) 타입인 경우.
+      _this2.toTemplateGRF(T).then(function (result) {
+        resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * config.dpi) + '\n', result, '^XZ'].join('\n'));
+      }, function (reason) {
+        reject(reason);
+      });
+    } else {
+      // ZPL 타입인 경우.
+      _this2.root.toZpl(T, I).then(function (result) {
+        resolve(['^XA', '^PW' + Math.round(labelWidth / 2.54 * config.dpi) + '\n', result, '^XZ'].join('\n'));
+      }, function (reason) {
+        reject(reason);
+      });
+    }
+  });
+};
+
+exports.Scene = scene.Scene;
+
+},{"../../config":1,"../utils/to-grf":16,"./interceptors":9}],13:[function(require,module,exports){
+'use strict';
+
+var _hasVariables = require('../utils/has-variables');
 
 var config = require('../../config').config;
 
 var MAX_NUMBER_OF_LINES = 100;
 
-scene.Component.prototype.toZplForText = function (T) {
+scene.Component.prototype.toZplForText = function (T, I) {
+
+  /* 이미지 타입이며, 변수가 없는 경우는 그냥 리턴한다. */
+  if (I && !(0, _hasVariables.hasVariables)(this.get('text'))) return;
+
   var _model = this.model;
   var textWrap = _model.textWrap;
   var textAlign = _model.textAlign;
@@ -652,14 +855,33 @@ scene.Component.prototype.toZplForText = function (T) {
   }).join('\n') + '\n';
 };
 
-scene.Text.prototype._toZpl = function (T) {
+scene.Text.prototype._toZpl = function (T, I) {
 
-  return this.toZplForText(T);
+  return this.toZplForText(T, I);
 };
 
 exports.Text = scene.Text;
 
-},{"../../config":1}],10:[function(require,module,exports){
+},{"../../config":1,"../utils/has-variables":14}],14:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.hasVariables = hasVariables;
+function hasVariables(text) {
+  if (!text) return false;
+
+  // 내부 속성용 변수 표현이 있는 지 확인한다.
+  if (text.search(/#{(\S*)}/) !== -1) return true;
+
+  // 변수용 변수 표현이 있는 지 확인한다.
+  if (text.search(/\${[^}]*}/) !== -1) return true;
+
+  return false;
+}
+
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -770,7 +992,7 @@ function binarize(width, height, data) {
   return binarized;
 }
 
-},{}],11:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -854,7 +1076,7 @@ function getImageGrf(width, height, src) {
 
       var grf = buildImageGrf(width, height, (0, _rgbBinarize.binarize)(width, height, data));
 
-      canvas.remove();
+      typeof document !== 'undefined' && canvas.remove();
 
       resolve(grf);
     };
@@ -891,4 +1113,4 @@ function getGrfCommand(bounds, src) {
   });
 }
 
-},{"./rgb-binarize":10}]},{},[2]);
+},{"./rgb-binarize":15}]},{},[2]);

@@ -9,9 +9,13 @@ require('../../src/components/ellipse');
 require('../../src/components/line');
 require('../../src/components/image');
 
+require('../../src/components/scene');
+
 describe('ZPL Builder', function () {
 
   describe('컨테이너가 없는 경우.', function () {
+
+    this.timeout(4000);
 
     var model;
 
@@ -138,7 +142,7 @@ describe('ZPL Builder', function () {
         model
       });
 
-      test_scene.toZpl().then(result => {
+      test_scene.toZpl(true, true).then(result => {
         console.log(result);
         expect(true).to.equal(true);
 

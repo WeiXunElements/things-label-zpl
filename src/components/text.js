@@ -1,8 +1,13 @@
+import { hasVariables } from '../utils/has-variables'
 var config = require('../../config').config
 
 const MAX_NUMBER_OF_LINES = 100;
 
 scene.Component.prototype.toZplForText = function(T, I) {
+
+  /* 이미지 타입이며, 변수가 없는 경우는 그냥 리턴한다. */
+  if(I && !hasVariables(this.get('text')))
+    return;
 
   var {
     textWrap,
