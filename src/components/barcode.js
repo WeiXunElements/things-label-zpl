@@ -163,11 +163,14 @@ scene.Barcode.prototype._toZpl = function(T, I) {
 
 	if (symbol === 'qrcode') {
 		commands.push(['^FDQ', 'A' + text]);
-	} else {
+    commands.push(['^FS']);
+	} else if (symbol === 'code39') {
 		// ^FS가 텍스트와 같은 줄에 있지 않으면 텍스트가 나오지 않는 바코드가 있음(ex : code39)
 		commands.push(['^FD' + text + '^FS']);
-	}
-
+	} else {
+    commands.push(['^FD' + text]);
+    commands.push(['^FS']);
+  }
 
   var zpl = commands.map(command => {
     return command.join(',')
