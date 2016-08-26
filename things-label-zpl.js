@@ -144,7 +144,6 @@ scene.Barcode.prototype._toZpl = function (T, I) {
       break;
     case 'micropdf417':
       // 높이 대략적인 계산, 3번째 값은 type속성으로, 2가 제일 비슷함.
-      // barHeight = Math.round(barHeight / 16.84)
       commands.push(['^BF' + orientation, barHeight, '2']);
       break;
     case 'industrial2of5':
@@ -188,7 +187,7 @@ scene.Barcode.prototype._toZpl = function (T, I) {
        *                              6 on 600 dpi printers
        */
       // QR의 Scale이 6보다 크면 그 이상 크기가 없기 때문에 무조건 6으로 고정
-      barWidth = qrScaleTable[scale_w] ? qrScaleTable[scale_w] : qrScaleTable['6'];
+      barWidth = qrScaleTable[Math.round(scale_w)] ? qrScaleTable[scale_w] : qrScaleTable['6'];
       commands.push(['^BQ' + orientation, 2, barWidth]);
       break;
     case 'upca':
@@ -313,12 +312,13 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
     var _model2 = this.model;
     var fillStyle = _model2.fillStyle;
     var lineWidth = _model2.lineWidth;
+    var fill = _model2.fill;
     var _labelingBounds = this.labelingBounds;
     var width = _labelingBounds.width;
     var height = _labelingBounds.height;
 
 
-    if (isBlackColor(fillStyle)) return Math.round(Math.min(width, height) / 2);else return Math.round(lineWidth * this.labelingRatio);
+    if (fill) return Math.round(Math.min(width, height) / 2);else return Math.round(lineWidth * this.labelingRatio);
   }
 });
 

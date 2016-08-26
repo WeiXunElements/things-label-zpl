@@ -87,7 +87,8 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
   get: function() {
     var {
       fillStyle,
-      lineWidth
+      lineWidth,
+      fill
     } = this.model;
 
     var {
@@ -95,7 +96,7 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
       height
     } = this.labelingBounds;
 
-    if(isBlackColor(fillStyle))
+    if(fill)
       return Math.round(Math.min(width, height) / 2);
     else
       return Math.round(lineWidth * this.labelingRatio);
