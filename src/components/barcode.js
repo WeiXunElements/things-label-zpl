@@ -2,8 +2,18 @@ var config = require('../../config').config
 
 var scale_ratio = {
 	'code39': [1, 1],
-	'code128': [0.5, 1]
+	'code128': [0.5, 1],
+	'micropdf417': [0.8, 0.0594],
 };
+
+var qrScaleTable = {
+	'1': 2,
+	'2': 3,
+	'3': 5,
+	'4': 6,
+	'5': 8,
+	'6': 10
+}
 
 var TWO_D_BARCODES = [
 	'qrcode',
@@ -46,6 +56,9 @@ scene.Barcode.prototype._toZpl = function(T, I) {
   // BC 커맨드의 높이 정보가 없을 때 디폴트로 적용됨.
 
   var barHeight = (orientation == 'R' || orientation == 'B') ? width : height;
+
+	// 스케일 조정
+	barHeight = scale_ratio[symbol] ? scale_ratio[symbol][1] * height : height;
 	var barWidth = scale_ratio[symbol] ? scale_ratio[symbol][0] * scale_w : scale_w;
 
 	commands.push(['^BY' + barWidth, barRatio, barHeight]);
@@ -109,8 +122,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
     commands.push(['^BE' + orientation, barHeight, showText, textAbove]);
     break;
   case 'micropdf417'     :
-		// 높이 대략적인 계산, 3번째 값은 2가 제일 비슷함.
-		barHeight = Math.round(barHeight / 16.84)
+		// 높이 대략적인 계산, 3번째 값은 type속성으로, 2가 제일 비슷함.
     commands.push(['^BF' + orientation, barHeight, '2']);
     break;
   case 'industrial2of5'  :	// bwip에서 지원하지 않는 바코드.
@@ -147,7 +159,9 @@ scene.Barcode.prototype._toZpl = function(T, I) {
      *                              3 on 300 dpi printers
      *                              6 on 600 dpi printers
      */
-    commands.push(['^BQ' + orientation, 2, 10]);
+		// QR의 Scale이 6보다 크면 그 이상 크기가 없기 때문에 무조건 6으로 고정
+		barWidth = qrScaleTable[Math.round(scale_w)] ? qrScaleTable[scale_w] : qrScaleTable['6']
+    commands.push(['^BQ' + orientation, 2, barWidth]);
     break;
   case 'upca'            :
 		// 사이즈 양옆으로 커짐

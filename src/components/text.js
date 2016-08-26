@@ -12,7 +12,8 @@ scene.Component.prototype.toZplForText = function(T, I) {
   var {
     textWrap,
     textAlign,
-    textBaseline
+    textBaseline,
+    fontCode = '1'
   } = this.model
 
   var {
@@ -28,7 +29,7 @@ scene.Component.prototype.toZplForText = function(T, I) {
   var charHeight = this.fontSize * this.labelingRatio;
   var charWidth = this.fontSize * this.labelingRatio;
 
-  var fontNo = config.fontNo || 'A';
+  var fontNo = fontCode; //config.fontNo || 'A';
 
   if(textWrap) {
 
