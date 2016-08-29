@@ -54,6 +54,10 @@ scene.Component.prototype.toZplForText = function(T, I) {
     /* hangingIndent기능은 지원하지 않는다. */
     var hangingIndent = 0;
 
+    // ^FB가 있을때에 \&는 개행 명령어임.
+    if(text.indexOf('\n') != -1)
+      text = text.replace('\n', '\\&\n')
+
     var commands = [
       ['^FO' + left, top],
       // ['^A@'+orientation, charHeight, charWidth * 0.75],
