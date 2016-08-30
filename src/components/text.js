@@ -10,7 +10,6 @@ scene.Component.prototype.toZplForText = function(T, I) {
     return;
 
   var {
-    textWrap,
     textAlign,
     textBaseline,
     fontCode = '6'
@@ -31,7 +30,6 @@ scene.Component.prototype.toZplForText = function(T, I) {
 
   var fontNo = fontCode; //config.fontNo || 'A';
 
-  if(textWrap) {
 
     var justification;
 
@@ -66,15 +64,7 @@ scene.Component.prototype.toZplForText = function(T, I) {
       ['^FD' + text],
       ['^FS']
     ];
-  } else {
-    var commands = [
-      ['^FO' + left, top],
-      // ['^A@' + orientation, charHeight, charWidth * 0.75],
-      ['^A' + fontNo + orientation, charHeight, charWidth],
-      ['^FD' + text],
-      ['^FS']
-    ];
-  }
+
 
   return commands.map(command => {
     return command.join(',')

@@ -831,7 +831,6 @@ scene.Component.prototype.toZplForText = function (T, I) {
   if (I && !(0, _hasVariables.hasVariables)(this.get('text'))) return;
 
   var _model = this.model;
-  var textWrap = _model.textWrap;
   var textAlign = _model.textAlign;
   var textBaseline = _model.textBaseline;
   var _model$fontCode = _model.fontCode;
@@ -851,41 +850,35 @@ scene.Component.prototype.toZplForText = function (T, I) {
 
   var fontNo = fontCode; //config.fontNo || 'A';
 
-  if (textWrap) {
 
-    var justification;
+  var justification;
 
-    switch (textAlign) {
-      case 'right':
-        justification = 'R';
-        break;
-      case 'justify':
-        justification = 'J';
-        break;
-      case 'center':
-        justification = 'C';
-        break;
-      case 'left':
-      default:
-        justification = 'L';
-        break;
-    }
-
-    /* hangingIndent기능은 지원하지 않는다. */
-    var hangingIndent = 0;
-
-    // ^FB가 있을때에 \&는 개행 명령어임.
-    if (text.indexOf('\n') != -1) text = text.replace('\n', '\\&\n');
-
-    var commands = [['^FO' + left, top],
-    // ['^A@'+orientation, charHeight, charWidth * 0.75],
-    ['^A' + fontNo + orientation, charHeight, charWidth], // FIXME
-    ['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent], ['^FD' + text], ['^FS']];
-  } else {
-    var commands = [['^FO' + left, top],
-    // ['^A@' + orientation, charHeight, charWidth * 0.75],
-    ['^A' + fontNo + orientation, charHeight, charWidth], ['^FD' + text], ['^FS']];
+  switch (textAlign) {
+    case 'right':
+      justification = 'R';
+      break;
+    case 'justify':
+      justification = 'J';
+      break;
+    case 'center':
+      justification = 'C';
+      break;
+    case 'left':
+    default:
+      justification = 'L';
+      break;
   }
+
+  /* hangingIndent기능은 지원하지 않는다. */
+  var hangingIndent = 0;
+
+  // ^FB가 있을때에 \&는 개행 명령어임.
+  if (text.indexOf('\n') != -1) text = text.replace(/\n/g, '\\&\n');
+
+  var commands = [['^FO' + left, top],
+  // ['^A@'+orientation, charHeight, charWidth * 0.75],
+  ['^A' + fontNo + orientation, charHeight, charWidth], // FIXME
+  ['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent], ['^FD' + text], ['^FS']];
 
   return commands.map(function (command) {
     return command.join(',');
