@@ -835,7 +835,7 @@ scene.Component.prototype.toZplForText = function (T, I) {
   var textAlign = _model.textAlign;
   var textBaseline = _model.textBaseline;
   var _model$fontCode = _model.fontCode;
-  var fontCode = _model$fontCode === undefined ? '1' : _model$fontCode;
+  var fontCode = _model$fontCode === undefined ? '6' : _model$fontCode;
   var _labelingTextBounds = this.labelingTextBounds;
   var left = _labelingTextBounds.left;
   var top = _labelingTextBounds.top;

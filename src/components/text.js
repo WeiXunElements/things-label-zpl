@@ -13,7 +13,7 @@ scene.Component.prototype.toZplForText = function(T, I) {
     textWrap,
     textAlign,
     textBaseline,
-    fontCode = '1'
+    fontCode = '6'
   } = this.model
 
   var {
@@ -56,7 +56,7 @@ scene.Component.prototype.toZplForText = function(T, I) {
 
     // ^FB가 있을때에 \&는 개행 명령어임.
     if(text.indexOf('\n') != -1)
-      text = text.replace('\n', '\\&\n')
+      text = text.replace(/\n/g, '\\&\n')
 
     var commands = [
       ['^FO' + left, top],
