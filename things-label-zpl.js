@@ -50,7 +50,7 @@ scene.Barcode.prototype._toZpl = function (T, I) {
   var _model$scale_w = _model.scale_w;
   var scale_w = _model$scale_w === undefined ? 1 : _model$scale_w;
   var _model$showText = _model.showText;
-  var showText = _model$showText === undefined ? 'Y' : _model$showText;
+  var showText = _model$showText === undefined ? true : _model$showText;
   var _model$textAbove = _model.textAbove;
   var textAbove = _model$textAbove === undefined ? '' : _model$textAbove;
   var _labelingBounds = this.labelingBounds;
@@ -89,6 +89,8 @@ scene.Barcode.prototype._toZpl = function (T, I) {
   }
 
   var dpi = config.dpi; // FIXME
+
+  showText = showText ? 'Y' : 'N';
 
   switch (symbol) {
     case 'code11':

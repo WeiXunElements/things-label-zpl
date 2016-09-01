@@ -29,7 +29,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
 	var {
 		symbol,
 		scale_w = 1,
-		showText = 'Y',
+		showText = true,
 		textAbove = ''
 	} = this.model;
 
@@ -70,6 +70,8 @@ scene.Barcode.prototype._toZpl = function(T, I) {
 
 	var dpi = config.dpi;	// FIXME
 
+	showText = showText ? 'Y' : 'N'
+	
   switch(symbol) {
   case 'code11'          :
     commands.push(['^B1' + orientation, , barHeight, showText, textAbove]);
