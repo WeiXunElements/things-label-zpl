@@ -27,7 +27,7 @@ scene.Scene.prototype.toTemplateGRF = function(T) {
 
   // 2. scene의 모든 컴포넌트에 대해서 prepare(resolve, reject)와 prepareFill(resolve, reject)를 호출한다.
   // ... traverse => pending promises를 채운다.
-  this.root.forEach((component) => {
+  this.root.traverse((component) => {
     pendings.push(new Promise((resolve, reject) => {
       component.prepare(resolve, reject);
     }));
@@ -89,7 +89,7 @@ scene.Scene.prototype.toTemplateGRF = function(T) {
       }, canvas.toDataURL()));
 
       if(T) {
-        this.root.components.forEach(component => {
+        this.root.forEach(component => {
           promises.push(component.toZpl(T, true)); // [T]emplate, [I]mage 파라미터를 패스한다.
         });
       }
