@@ -71,7 +71,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
 	var dpi = config.dpi;	// FIXME
 
 	showText = showText ? 'Y' : 'N'
-	
+
   switch(symbol) {
   case 'code11'          :
     commands.push(['^B1' + orientation, , barHeight, showText, textAbove]);
@@ -81,7 +81,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
     break;
   case 'code39'          :
 		// 2번째 값을 'Y'로 주면 맨 뒤에 '2'가 붙지만 'N'으로 해도 bwip에서 무조건 'Y'로 그려주므로 기본값을 'Y'로 함
-    commands.push(['^B3' + orientation, 'Y', barHeight, showText, textAbove]);
+    commands.push(['^B3' + orientation, 'N', barHeight, showText, textAbove]);
     break;
   case 'code49'          :	// 높이를 맞출 수 없음 (보류)
     commands.push(['^B4' + orientation, barHeight, showText,]);

@@ -86,7 +86,6 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
 
   get: function() {
     var {
-      fillStyle,
       lineWidth,
       fill
     } = this.model;

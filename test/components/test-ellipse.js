@@ -77,7 +77,7 @@ describe('Ellipse', function () {
       expect(result[1].params[2]).to.equal(String(component.lineWidth));
     });
 
-    it('fillStyle이 검은색일 경우에는 border-thickness의 값은 rx와 ry중 작은값으로 변환한다.', function () {
+    it('fill이 true일 경우에는 border-thickness의 값은 rx와 ry중 작은값 / 2 로 변환한다.', function () {
       model.fillStyle = '#000000';
       var test_scene = scene.create({
         model: scene_model
@@ -87,6 +87,7 @@ describe('Ellipse', function () {
       var result = parseZpl(component._toZpl())
       var ratio = component.labelingRatio;
 
+      // console.log(result[1])
       expect(result[1].params[2]).to.equal(
         String(Math.round(Math.min(model.rx * ratio, model.ry * ratio)))
       );

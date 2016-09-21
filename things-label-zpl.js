@@ -101,7 +101,7 @@ scene.Barcode.prototype._toZpl = function (T, I) {
       break;
     case 'code39':
       // 2번째 값을 'Y'로 주면 맨 뒤에 '2'가 붙지만 'N'으로 해도 bwip에서 무조건 'Y'로 그려주므로 기본값을 'Y'로 함
-      commands.push(['^B3' + orientation, 'Y', barHeight, showText, textAbove]);
+      commands.push(['^B3' + orientation, 'N', barHeight, showText, textAbove]);
       break;
     case 'code49':
       // 높이를 맞출 수 없음 (보류)
@@ -312,7 +312,6 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
 
   get: function get() {
     var _model2 = this.model;
-    var fillStyle = _model2.fillStyle;
     var lineWidth = _model2.lineWidth;
     var fill = _model2.fill;
     var _labelingBounds = this.labelingBounds;
@@ -691,7 +690,7 @@ scene.Scene.prototype.toTemplateGRF = function (T) {
 
   // 2. scene의 모든 컴포넌트에 대해서 prepare(resolve, reject)와 prepareFill(resolve, reject)를 호출한다.
   // ... traverse => pending promises를 채운다.
-  this.root.forEach(function (component) {
+  this.root.traverse(function (component) {
     pendings.push(new Promise(function (resolve, reject) {
       component.prepare(resolve, reject);
     }));
@@ -753,7 +752,7 @@ scene.Scene.prototype.toTemplateGRF = function (T) {
       }, canvas.toDataURL()));
 
       if (T) {
-        _this.root.components.forEach(function (component) {
+        _this.root.forEach(function (component) {
           promises.push(component.toZpl(T, true)); // [T]emplate, [I]mage 파라미터를 패스한다.
         });
       }
