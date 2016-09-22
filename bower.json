@@ -21,5 +21,9 @@
     "bower_components",
     "src",
     "lib"
-  ]
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "things-scene-barcode": "ThingsElements/things-scene-barcode"
+  }
 }
