@@ -59,7 +59,7 @@ scene.Component.prototype.toZplForText = function(T, I) {
     var commands = [
       ['^FO' + left, top],
       // ['^A@'+orientation, charHeight, charWidth * 0.75],
-      ['^A' + fontNo + orientation, charHeight, charWidth], // FIXME
+      ['^A' + fontNo + orientation, Math.round(charHeight), Math.round(charWidth)], // FIXME
       ['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent],
       ['^FD' + text],
       ['^FS']

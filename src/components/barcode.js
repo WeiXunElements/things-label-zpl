@@ -80,7 +80,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
     commands.push(['^B2' + orientation, barHeight, showText, textAbove, 'Y' ]);
     break;
   case 'code39'          :
-		// 2번째 값을 'Y'로 주면 맨 뒤에 '2'가 붙지만 'N'으로 해도 bwip에서 무조건 'Y'로 그려주므로 기본값을 'Y'로 함
+		// 2번째 값을 'Y'로 주면 출력 시 맨 뒤에 다른 문자 한개가 추가로 붙음. (bwip에서는 무조건 'Y'로 그림) 
     commands.push(['^B3' + orientation, 'N', barHeight, showText, textAbove]);
     break;
   case 'code49'          :	// 높이를 맞출 수 없음 (보류)
