@@ -146,6 +146,8 @@ describe('Rect', function () {
     it('border-thickness는 fillStyle이 검은색일 때, 90과 270도 일때는 width와 height중 작은 값의 절반이 되어야 한다.', function () {
       model.fillStyle = 'black'
       model.rotation = Math.PI * 0.5;  // 90도
+      model.fill = true;
+
       var test_scene = scene.create({
         model: scene_model
       });
@@ -154,12 +156,14 @@ describe('Rect', function () {
       var result = parseZpl(component._toZpl());
       var bounds = component.labelingBounds;
 
-      expect(result[1].params[2]).to.equal(String(Math.min(bounds.width, bounds.height)/2));
+      expect(result[1].params[2]).to.equal(String(Math.min(bounds.width, bounds.height) / 2));
     });
 
     it('border-thickness는 fillStyle이 검은색일 때, 0과 180도 일때는 width와 height중 작은 값의 절반이 되어야 한다.', function () {
       model.fillStyle = 'black'
       model.rotation = Math.PI * 1;  // 180도
+      model.fill = true;
+
       var test_scene = scene.create({
         model: scene_model
       });
