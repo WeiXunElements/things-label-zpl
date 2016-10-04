@@ -634,9 +634,15 @@ scene.Component.prototype.toZplForRect = function (bounds, lineColor, borderThic
   var left = bounds.left;
   var width = bounds.width;
   var height = bounds.height;
+  var _model = this.model;
+  var fill = _model.fill;
+  var lineWidth = _model.lineWidth;
 
 
-  var commands = [['^FO' + left, top], ['^GB' + width, height, borderThickness, lineColor, Math.round(round * 8 / 100)], ['^FS']];
+  var borderCulc = Math.round(lineWidth / 3);
+  var caseFill = fill ? borderCulc : 0;
+
+  var commands = [['^FO' + (left - borderCulc), top - borderCulc], ['^GB' + (width + borderCulc * 2), height + borderCulc * 2, borderThickness + caseFill, lineColor, Math.round(round * 8 / 100)], ['^FS']];
 
   return commands.map(function (command) {
     return command.join(',');
