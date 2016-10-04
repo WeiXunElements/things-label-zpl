@@ -428,12 +428,18 @@ scene.Component.prototype.toZplForEllipse = function (bounds, lineColor, borderT
   var left = bounds.left;
   var width = bounds.width;
   var height = bounds.height;
+  var _model = this.model;
+  var fill = _model.fill;
+  var lineWidth = _model.lineWidth;
 
 
   var commands = [];
 
-  commands.push(['^FO' + left, top]);
-  if (width === height) commands.push(['^GC' + width, borderThickness, lineColor]);else commands.push(['^GE' + width, height, borderThickness, lineColor]);
+  var borderCulc = Math.round(lineWidth / 3);
+  var caseFill = fill ? borderCulc : 0;
+
+  commands.push(['^FO' + (left - borderCulc), top - borderCulc]);
+  if (width === height) commands.push(['^GC' + (width + borderCulc * 2), borderThickness + caseFill, lineColor]);else commands.push(['^GE' + (width + borderCulc * 2), height + borderCulc * 2, borderThickness + caseFill, lineColor]);
   commands.push(['^FS']);
 
   return commands.map(function (command) {
