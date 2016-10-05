@@ -637,9 +637,10 @@ scene.Component.prototype.toZplForRect = function (bounds, lineColor, borderThic
   var _model = this.model;
   var fill = _model.fill;
   var lineWidth = _model.lineWidth;
+  var type = _model.type;
 
 
-  var borderCulc = Math.round(lineWidth / 3);
+  var borderCulc = type == 'rect' ? Math.round(lineWidth / 3) : 0;
   var caseFill = fill ? borderCulc : 0;
 
   var commands = [['^FO' + (left - borderCulc), top - borderCulc], ['^GB' + (width + borderCulc * 2), height + borderCulc * 2, borderThickness + caseFill, lineColor, Math.round(round * 8 / 100)], ['^FS']];
