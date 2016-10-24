@@ -58,7 +58,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
   var barHeight = (orientation == 'R' || orientation == 'B') ? width : height;
 
 	// 스케일 조정
-	barHeight = scale_ratio[symbol] ? scale_ratio[symbol][1] * height : height;
+	barHeight = scale_ratio[symbol] ? scale_ratio[symbol][1] * barHeight : barHeight;
 	var barWidth = scale_ratio[symbol] ? scale_ratio[symbol][0] * scale_w : scale_w;
 
 	commands.push(['^BY' + barWidth, barRatio, barHeight]);
