@@ -105,9 +105,11 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
 });
 
 Object.defineProperty(scene.Component.prototype, "fontSize", {
-  var fontSize = this.get('fontSize') || DEFAULT_FONT_SIZE;
+  get: function(){
+    var fontSize = this.get('fontSize') || DEFAULT_FONT_SIZE;
 
-  return fontSize;
+    return fontSize;
+  }
 });
 
 Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
