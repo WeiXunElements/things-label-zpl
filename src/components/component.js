@@ -1,5 +1,7 @@
 var config = require('../../config').config
 
+const DEFAULT_FONT_SIZE = 15;
+
 const ORIENTATION = {
   NORMAL: 'N',
   ROTATE_90: 'R',
@@ -102,6 +104,12 @@ Object.defineProperty(scene.Component.prototype, "borderThickness", {
   }
 });
 
+Object.defineProperty(scene.Component.prototype, "fontSize", {
+  var fontSize = this.get('fontSize') || DEFAULT_FONT_SIZE;
+
+  return fontSize;
+});
+
 Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
 
   get: function() {
@@ -121,7 +129,7 @@ Object.defineProperty(scene.Component.prototype, "labelingTextBounds", {
      * TODO. 무조건 한줄이라는 전제조건이면, textBaseline기능이 계산될 수 있으므로, 개선하자.
      * 또한, 템플릿으로 프린트하지 않는 경우에는 몇줄이 되더라도 계산이 가능하므로, 개선하자.
      */
-    height = this.fontSize;
+    height = this.get('fontSize') || DEFAULT.FONT_SIZE;//this.fontSize;
 
     var p1 = this.transcoordS2T(left, top);
     var p2 = this.transcoordS2T(left + width, top + height);
