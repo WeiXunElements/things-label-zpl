@@ -30,7 +30,8 @@ var config = require('../../config').config;
 var scale_ratio = {
   'code39': [1, 1],
   'code128': [0.5, 1],
-  'micropdf417': [0.8, 0.0594]
+  'micropdf417': [0.8, 0.0594],
+  'ean8': [0.8, 1]
 };
 
 var qrScaleTable = {
@@ -81,6 +82,8 @@ scene.Barcode.prototype._toZpl = function (T, I) {
   barHeight = scale_ratio[symbol] ? scale_ratio[symbol][1] * barHeight : barHeight;
   var barWidth = scale_ratio[symbol] ? scale_ratio[symbol][0] * scale_w : scale_w;
 
+  barWidth = barWidth < 1 ? 1 : Math.floor(barWidth);
+
   commands.push(['^BY' + barWidth, barRatio, barHeight]);
   commands.push(['^FO' + left, top]);
 
@@ -97,10 +100,10 @@ scene.Barcode.prototype._toZpl = function (T, I) {
       commands.push(['^B1' + orientation,, barHeight, showText, textAbove]);
       break;
     case 'interleaved2of5':
-      commands.push(['^B2' + orientation, barHeight, showText, textAbove, 'Y']);
+      commands.push(['^B2' + orientation, barHeight, showText, textAbove, 'N']);
       break;
     case 'code39':
-      // 2번째 값을 'Y'로 주면 출력 시 맨 뒤에 다른 문자 한개가 추가로 붙음. (bwip에서는 무조건 'Y'로 그림) 
+      // 2번째 값을 'Y'로 주면 출력 시 맨 뒤에 다른 문자 한개가 추가로 붙음. (bwip에서는 무조건 'Y'로 그림)
       commands.push(['^B3' + orientation, 'N', barHeight, showText, textAbove]);
       break;
     case 'code49':
