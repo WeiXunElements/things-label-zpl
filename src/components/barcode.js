@@ -1,12 +1,5 @@
 var config = require('../../config').config
 
-var scale_ratio = {
-	'code39': [1, 1],
-	'code128': [0.5, 1],
-	'micropdf417': [0.8, 0.0594],
-	'ean8': [0.8, 1]
-};
-
 var qrScaleTable = {
 	'1': 2,
 	'2': 3,
@@ -57,15 +50,44 @@ scene.Barcode.prototype._toZpl = function(T, I) {
   // BC 커맨드의 높이 정보가 없을 때 디폴트로 적용됨.
 
   var barHeight = (orientation == 'R' || orientation == 'B') ? width : height;
+	var barWidth = scale_w;
 
-	// 스케일 조정
-	barHeight = scale_ratio[symbol] ? scale_ratio[symbol][1] * barHeight : barHeight;
-	var barWidth = scale_ratio[symbol] ? scale_ratio[symbol][0] * scale_w : scale_w;
+	// if(symbol == 'code93') // scale_w를 0.9로 했을때 1.8은 2로 해야함... 나머지는 소수점 제거.
+	// 	barWidth += 0.2;
+	// else if(symbol == 'upca')
+	// 	barWidth = barWidth >= 4 ? barWidth - 1 : barWidth;
+	// else if(symbol == 'upce')
+	// 	barWidth = barWidth >= 5 ? barWidth - 1 : barWidth;
+	// else if(symbol == 'msi')
+	// 	barWidth = barWidth >= 3 ? barWidth - 1 : barWidth;
+
 
 	// 스케일이 1 아래로는 무조건 1, 나머지는 소수점 제거
 	barWidth = barWidth < 1 ? 1 : Math.floor(barWidth);
 
-	
+	// bwip은 left좌표를 끝의 숫자 중심으로 그리는데 실제는 바코드 기준으로 그림. 바코드가 커질수록 숫자가 왼쪽으로 튀어 나오는 현상때문에 x좌표를 숫자만큼 밀어줘야함
+	if(symbol == 'ean13' && showText){
+		if(barWidth == 1)
+			left += 20
+		else if(barWidth == 2)
+			left += 25
+		else if(barWidth == 3)
+			left += 25
+		else if(barWidth == 4)
+			left += 35
+		else if(barWidth == 5)
+			left += 20
+		else if(barWidth == 6)
+			left += 50
+		else if(barWidth == 7)
+			left += 50
+		else if(barWidth == 8)
+			left += 75
+		else if(barWidth == 9)
+			left += 75
+	}
+
+
 	commands.push(['^BY' + barWidth, barRatio, barHeight]);
   commands.push(['^FO' + left, top]);
 
