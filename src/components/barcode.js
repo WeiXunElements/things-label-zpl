@@ -18,57 +18,57 @@ var TWO_D_BARCODES = [
 	'code49'
 ];
 
-function textOffsetCorrection(symbol) {
-	switch(symbol){
-		case 'ean8':
-			if(barWidth == 1)
-				left += 20
-			else if(barWidth == 2)
-				left += 25
-			else if(barWidth == 3)
-				left += 25
-			else if(barWidth == 4)
-				left += 35
-			else if(barWidth == 5)
-				left += 20
-			else if(barWidth == 6)
-				left += 50
-			else if(barWidth == 7)
-				left += 50
-			else if(barWidth == 8)
-				left += 75
-			else if(barWidth == 9)
-				left += 75
-			break;
-		case 'ean13':
-			if(barWidth == 1)	left += 20
-			else if(barWidth == 2)
-				left += 25
-			else if(barWidth == 3)
-				left += 25
-			else if(barWidth == 4)
-				left += 35
-			else if(barWidth == 5)
-				left += 20
-			else if(barWidth == 6)
-				left += 50
-			else if(barWidth == 7)
-				left += 50
-			else if(barWidth == 8)
-				left += 75
-			else if(barWidth == 9)
-				left += 75
-			break;
-		case 'upce':
-			break;
-		case 'upca':
-			break;
-	}
-}
-
-if((symbol == 'ean8' || symbol == 'ean13' || symbol == 'upce' || symbol == 'upca') && showText){
-	textOffsetCorrection(symbol)
-}
+// function textOffsetCorrection(symbol) {
+// 	switch(symbol){
+// 		case 'ean8':
+// 			if(barWidth == 1)
+// 				left += 20
+// 			else if(barWidth == 2)
+// 				left += 25
+// 			else if(barWidth == 3)
+// 				left += 25
+// 			else if(barWidth == 4)
+// 				left += 35
+// 			else if(barWidth == 5)
+// 				left += 20
+// 			else if(barWidth == 6)
+// 				left += 50
+// 			else if(barWidth == 7)
+// 				left += 50
+// 			else if(barWidth == 8)
+// 				left += 75
+// 			else if(barWidth == 9)
+// 				left += 75
+// 			break;
+// 		case 'ean13':
+// 			if(barWidth == 1)	left += 20
+// 			else if(barWidth == 2)
+// 				left += 25
+// 			else if(barWidth == 3)
+// 				left += 25
+// 			else if(barWidth == 4)
+// 				left += 35
+// 			else if(barWidth == 5)
+// 				left += 20
+// 			else if(barWidth == 6)
+// 				left += 50
+// 			else if(barWidth == 7)
+// 				left += 50
+// 			else if(barWidth == 8)
+// 				left += 75
+// 			else if(barWidth == 9)
+// 				left += 75
+// 			break;
+// 		case 'upce':
+// 			break;
+// 		case 'upca':
+// 			break;
+// 	}
+// }
+//
+// if((symbol == 'ean8' || symbol == 'ean13' || symbol == 'upce' || symbol == 'upca') && showText){
+// 	textOffsetCorrection(symbol)
+// }
 
 scene.Barcode.prototype._toZpl = function(T, I) {
 
@@ -90,7 +90,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
 	var orientation = this.orientation;
 
 	var commands = [];
-
+	console.log('save11')
   // ^BY 커맨드 : 바코드의 디폴트 설정.
   // barRatio : wide bar to narrow bar width ratio (no effect on fixed ratio bar codes)
   // 유효값 : 2.0 ~ 3.0
