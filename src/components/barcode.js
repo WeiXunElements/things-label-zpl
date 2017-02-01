@@ -18,6 +18,58 @@ var TWO_D_BARCODES = [
 	'code49'
 ];
 
+function textOffsetCorrection(symbol) {
+	switch(symbol){
+		case 'ean8':
+			if(barWidth == 1)
+				left += 20
+			else if(barWidth == 2)
+				left += 25
+			else if(barWidth == 3)
+				left += 25
+			else if(barWidth == 4)
+				left += 35
+			else if(barWidth == 5)
+				left += 20
+			else if(barWidth == 6)
+				left += 50
+			else if(barWidth == 7)
+				left += 50
+			else if(barWidth == 8)
+				left += 75
+			else if(barWidth == 9)
+				left += 75
+			break;
+		case 'ean13':
+			if(barWidth == 1)	left += 20
+			else if(barWidth == 2)
+				left += 25
+			else if(barWidth == 3)
+				left += 25
+			else if(barWidth == 4)
+				left += 35
+			else if(barWidth == 5)
+				left += 20
+			else if(barWidth == 6)
+				left += 50
+			else if(barWidth == 7)
+				left += 50
+			else if(barWidth == 8)
+				left += 75
+			else if(barWidth == 9)
+				left += 75
+			break;
+		case 'upce':
+			break;
+		case 'upca':
+			break;
+	}
+}
+
+if((symbol == 'ean8' || symbol == 'ean13' || symbol == 'upce' || symbol == 'upca') && showText){
+	textOffsetCorrection(symbol)
+}
+
 scene.Barcode.prototype._toZpl = function(T, I) {
 
 	var {
@@ -66,7 +118,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
 	barWidth = barWidth < 1 ? 1 : Math.floor(barWidth);
 
 	// bwip은 left좌표를 끝의 숫자 중심으로 그리는데 실제는 바코드 기준으로 그림. 바코드가 커질수록 숫자가 왼쪽으로 튀어 나오는 현상때문에 x좌표를 숫자만큼 밀어줘야함
-	if(symbol == 'ean13' && showText){
+	if((symbol == 'ean8' || symbol == 'ean13' || symbol == 'upce' || symbol == 'upca') && showText){
 		if(barWidth == 1)
 			left += 20
 		else if(barWidth == 2)
