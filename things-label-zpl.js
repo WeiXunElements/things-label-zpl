@@ -38,57 +38,17 @@ var qrScaleTable = {
 
 var TWO_D_BARCODES = ['qrcode', 'pdf417', 'micropdf417', 'datamatrix', 'maxicode', 'code49'];
 
-// function textOffsetCorrection(symbol) {
-// 	switch(symbol){
-// 		case 'ean8':
-// 			if(barWidth == 1)
-// 				left += 20
-// 			else if(barWidth == 2)
-// 				left += 25
-// 			else if(barWidth == 3)
-// 				left += 25
-// 			else if(barWidth == 4)
-// 				left += 35
-// 			else if(barWidth == 5)
-// 				left += 20
-// 			else if(barWidth == 6)
-// 				left += 50
-// 			else if(barWidth == 7)
-// 				left += 50
-// 			else if(barWidth == 8)
-// 				left += 75
-// 			else if(barWidth == 9)
-// 				left += 75
-// 			break;
-// 		case 'ean13':
-// 			if(barWidth == 1)	left += 20
-// 			else if(barWidth == 2)
-// 				left += 25
-// 			else if(barWidth == 3)
-// 				left += 25
-// 			else if(barWidth == 4)
-// 				left += 35
-// 			else if(barWidth == 5)
-// 				left += 20
-// 			else if(barWidth == 6)
-// 				left += 50
-// 			else if(barWidth == 7)
-// 				left += 50
-// 			else if(barWidth == 8)
-// 				left += 75
-// 			else if(barWidth == 9)
-// 				left += 75
-// 			break;
-// 		case 'upce':
-// 			break;
-// 		case 'upca':
-// 			break;
-// 	}
-// }
-//
-// if((symbol == 'ean8' || symbol == 'ean13' || symbol == 'upce' || symbol == 'upca') && showText){
-// 	textOffsetCorrection(symbol)
-// }
+function textOffsetCorrection(symbol, barWidth) {
+  switch (symbol) {
+    case 'upce':
+    case 'ean13':
+      if (barWidth == 1) return 20;else if (barWidth == 2) return 25;else if (barWidth == 3) return 25;else if (barWidth == 4) return 35;else if (barWidth == 5) return 20;else if (barWidth == 6) return 50;else if (barWidth == 7) return 50;else if (barWidth == 8) return 75;else if (barWidth == 9) return 75;
+      break;
+    case 'upca':
+      if (barWidth == 1) return 10;else if (barWidth == 2) return 20;else if (barWidth == 3) return 25;else if (barWidth == 4) return 18;else if (barWidth == 5) return 28;else if (barWidth == 6) return 58;else if (barWidth == 7) return 90;else if (barWidth == 8) return 92;else if (barWidth == 9) return 95;
+      break;
+  }
+}
 
 scene.Barcode.prototype._toZpl = function (T, I) {
   var _model = this.model;
@@ -110,7 +70,7 @@ scene.Barcode.prototype._toZpl = function (T, I) {
   var orientation = this.orientation;
 
   var commands = [];
-  console.log('save');
+
   // ^BY 커맨드 : 바코드의 디폴트 설정.
   // barRatio : wide bar to narrow bar width ratio (no effect on fixed ratio bar codes)
   // 유효값 : 2.0 ~ 3.0
@@ -124,22 +84,12 @@ scene.Barcode.prototype._toZpl = function (T, I) {
   var barHeight = orientation == 'R' || orientation == 'B' ? width : height;
   var barWidth = scale_w;
 
-  // if(symbol == 'code93') // scale_w를 0.9로 했을때 1.8은 2로 해야함... 나머지는 소수점 제거.
-  // 	barWidth += 0.2;
-  // else if(symbol == 'upca')
-  // 	barWidth = barWidth >= 4 ? barWidth - 1 : barWidth;
-  // else if(symbol == 'upce')
-  // 	barWidth = barWidth >= 5 ? barWidth - 1 : barWidth;
-  // else if(symbol == 'msi')
-  // 	barWidth = barWidth >= 3 ? barWidth - 1 : barWidth;
-
-
   // 스케일이 1 아래로는 무조건 1, 나머지는 소수점 제거
   barWidth = barWidth < 1 ? 1 : Math.floor(barWidth);
 
   // bwip은 left좌표를 끝의 숫자 중심으로 그리는데 실제는 바코드 기준으로 그림. 바코드가 커질수록 숫자가 왼쪽으로 튀어 나오는 현상때문에 x좌표를 숫자만큼 밀어줘야함
-  if ((symbol == 'ean8' || symbol == 'ean13' || symbol == 'upce' || symbol == 'upca') && showText) {
-    if (barWidth == 1) left += 20;else if (barWidth == 2) left += 25;else if (barWidth == 3) left += 25;else if (barWidth == 4) left += 35;else if (barWidth == 5) left += 20;else if (barWidth == 6) left += 50;else if (barWidth == 7) left += 50;else if (barWidth == 8) left += 75;else if (barWidth == 9) left += 75;
+  if ((symbol == 'ean13' || symbol == 'upce' || symbol == 'upca') && showText) {
+    left += Number(textOffsetCorrection(symbol, barWidth));
   }
 
   commands.push(['^BY' + barWidth, barRatio, barHeight]);
@@ -272,6 +222,13 @@ scene.Barcode.prototype._toZpl = function (T, I) {
   } else if (symbol === 'code39') {
     // ^FS가 텍스트와 같은 줄에 있지 않으면 텍스트가 나오지 않는 바코드가 있음(ex : code39)
     commands.push(['^FD' + text + '^FS']);
+  } else if (symbol == 'upca' && text.length == 7) {
+    /*  upca는 기본 11개의 글자를 씀. 7글자를 써도 그려지긴 하는데 나머지 bwip과 zpl이 나머지 4자리를 채워주는 0의 위치가 다름
+     *  그래서 bwip에서 그려지는 데로 보이기 위해 7글자 일시 6번째 글자에 0을 4개 채우고 11자리로 만들어줌.
+     *  ex - 1234567 = 12345600007 로 바꿔줌. (어차피 7글자는 쓰지 않으므로 그냥 bwip에서 나오는 데로 출력 되게 코딩 해 놓은것)
+      */
+    commands.push(['^FD' + text.slice(0, 6) + '0000' + text.slice(6)]);
+    commands.push(['^FS']);
   } else {
     commands.push(['^FD' + text]);
     commands.push(['^FS']);
