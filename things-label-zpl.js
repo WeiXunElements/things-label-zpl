@@ -505,14 +505,12 @@ scene.ImageView.prototype.toZpl = function (T, I) {
 
 
   return new Promise(function (resolve, reject) {
+    if (!src) resolve('');
+
     (0, _toGrf.getGrfCommand)(_this.labelingBounds, typeof src === 'string' ? _this.app.url(src) : src).then(function (command) {
 
       resolve(command);
     }, function (error) {
-      // reject({
-      //   errorId: 'image-not-found',
-      //   errorDesc: '이미지를 찾을 수 없습니다.'
-      // });
       reject('Image not found. Check image URL.');
     });
   });
