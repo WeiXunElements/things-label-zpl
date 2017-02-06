@@ -509,8 +509,11 @@ scene.ImageView.prototype.toZpl = function (T, I) {
 
       resolve(command);
     }, function (error) {
-
-      reject(error);
+      // reject({
+      //   errorId: 'image-not-found',
+      //   errorDesc: '이미지를 찾을 수 없습니다.'
+      // });
+      reject('Image not found. Check image URL.');
     });
   });
 };
