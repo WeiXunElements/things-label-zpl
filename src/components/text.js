@@ -13,7 +13,7 @@ scene.Component.prototype.toZplForText = function(T, I) {
     textAlign,
     textBaseline,
     fontCode = '6',
-    multiLine = false
+    textWrap = false
   } = this.model
 
   var {
@@ -63,7 +63,7 @@ scene.Component.prototype.toZplForText = function(T, I) {
       ['^A' + fontNo + orientation, Math.round(charHeight), Math.round(charWidth)], // FIXME
     ];
 
-    if(multiLine)
+    if(textWrap)
       command.push(['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent])
 
     command.push(['^FD' + text])

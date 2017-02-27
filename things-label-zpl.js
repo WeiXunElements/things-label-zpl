@@ -881,8 +881,8 @@ scene.Component.prototype.toZplForText = function (T, I) {
   var textBaseline = _model.textBaseline;
   var _model$fontCode = _model.fontCode;
   var fontCode = _model$fontCode === undefined ? '6' : _model$fontCode;
-  var _model$multiLine = _model.multiLine;
-  var multiLine = _model$multiLine === undefined ? false : _model$multiLine;
+  var _model$textWrap = _model.textWrap;
+  var textWrap = _model$textWrap === undefined ? false : _model$textWrap;
   var _labelingTextBounds = this.labelingTextBounds;
   var left = _labelingTextBounds.left;
   var top = _labelingTextBounds.top;
@@ -927,7 +927,7 @@ scene.Component.prototype.toZplForText = function (T, I) {
   // ['^A@'+orientation, charHeight, charWidth * 0.75],
   ['^A' + fontNo + orientation, Math.round(charHeight), Math.round(charWidth)]];
 
-  if (multiLine) command.push(['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent]);
+  if (textWrap) command.push(['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent]);
 
   command.push(['^FD' + text]);
   command.push(['^FS']);
