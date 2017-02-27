@@ -64,10 +64,10 @@ scene.Component.prototype.toZplForText = function(T, I) {
     ];
 
     if(textWrap)
-      command.push(['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent])
+      commands.push(['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent])
 
-    command.push(['^FD' + text])
-    command.push(['^FS'])
+    commands.push(['^FD' + text])
+    commands.push(['^FS'])
 
   return commands.map(command => {
     return command.join(',')

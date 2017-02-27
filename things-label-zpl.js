@@ -927,10 +927,10 @@ scene.Component.prototype.toZplForText = function (T, I) {
   // ['^A@'+orientation, charHeight, charWidth * 0.75],
   ['^A' + fontNo + orientation, Math.round(charHeight), Math.round(charWidth)]];
 
-  if (textWrap) command.push(['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent]);
+  if (textWrap) commands.push(['^FB' + width, MAX_NUMBER_OF_LINES, lineSpace, justification, hangingIndent]);
 
-  command.push(['^FD' + text]);
-  command.push(['^FS']);
+  commands.push(['^FD' + text]);
+  commands.push(['^FS']);
 
   return commands.map(function (command) {
     return command.join(',');
