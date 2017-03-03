@@ -282,7 +282,9 @@ scene.Container.prototype.toZpl = function (T) {
   var _this2 = this;
 
   return new Promise(function (resolve, reject) {
-    var promises = _this2.components.map(function (component) {
+    var promises = _this2.components.filter(function (component) {
+      return component.get('type') !== 'variable';
+    }).map(function (component) {
       return component.toZpl(T);
     });
 
@@ -736,6 +738,9 @@ scene.Scene.prototype.toTemplateGRF = function (T) {
   // 2. scene의 모든 컴포넌트에 대해서 prepare(resolve, reject)와 prepareFill(resolve, reject)를 호출한다.
   // ... traverse => pending promises를 채운다.
   this.root.traverse(function (component) {
+
+    if (component.get('type') === 'variable') return;
+
     pendings.push(new Promise(function (resolve, reject) {
       component.prepare(resolve, reject);
     }));

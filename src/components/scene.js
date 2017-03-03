@@ -27,7 +27,11 @@ scene.Scene.prototype.toTemplateGRF = function(T) {
 
   // 2. scene의 모든 컴포넌트에 대해서 prepare(resolve, reject)와 prepareFill(resolve, reject)를 호출한다.
   // ... traverse => pending promises를 채운다.
-  this.root.traverse((component) => {
+  this.root.traverse(component => {
+
+    if(component.get('type') === 'variable')
+      return
+
     pendings.push(new Promise((resolve, reject) => {
       component.prepare(resolve, reject);
     }));

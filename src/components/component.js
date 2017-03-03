@@ -34,7 +34,9 @@ scene.Component.prototype.toZpl = function(T, I) {
 scene.Container.prototype.toZpl = function(T) {
 
   return new Promise((resolve, reject) => {
-    var promises = this.components.map(component => {
+    var promises = this.components.filter(component => {
+      return component.get('type') !== 'variable'
+    }).map(component => {
       return component.toZpl(T);
     });
 
