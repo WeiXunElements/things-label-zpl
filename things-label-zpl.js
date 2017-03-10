@@ -92,7 +92,8 @@ scene.Barcode.prototype._toZpl = function (T, I) {
     left += Number(textOffsetCorrection(symbol, barWidth));
   }
 
-  commands.push(['^BY' + barWidth, barRatio, barHeight]);
+  if (symbol == 'qrcode') commands.push(['^BY' + barWidth, barRatio]);else commands.push(['^BY' + barWidth, barRatio, barHeight]);
+
   commands.push(['^FO' + left, top]);
 
   if (showText && TWO_D_BARCODES.indexOf(symbol) == -1) {
