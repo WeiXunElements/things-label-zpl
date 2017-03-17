@@ -805,7 +805,9 @@ scene.Scene.prototype.toTemplateGRF = function (T) {
       }, canvas.toDataURL()));
 
       if (T) {
-        _this.root.forEach(function (component) {
+        _this.root.components.filter(function (component) {
+          return component.get('type') !== 'variable';
+        }).forEach(function (component) {
           promises.push(component.toZpl(T, true)); // [T]emplate, [I]mage 파라미터를 패스한다.
         });
       }
