@@ -19,10 +19,11 @@ require('./src/components/ellipse');
 require('./src/components/line');
 require('./src/components/image');
 require('./src/components/barcode');
+require('./src/components/variable');
 
 require('./src/components/scene');
 
-},{"./src/components/barcode":3,"./src/components/component":4,"./src/components/ellipse":5,"./src/components/image":6,"./src/components/line":10,"./src/components/rect":11,"./src/components/scene":12,"./src/components/text":13}],3:[function(require,module,exports){
+},{"./src/components/barcode":3,"./src/components/component":4,"./src/components/ellipse":5,"./src/components/image":6,"./src/components/line":10,"./src/components/rect":11,"./src/components/scene":12,"./src/components/text":13,"./src/components/variable":14}],3:[function(require,module,exports){
 'use strict';
 
 var config = require('../../config').config;
@@ -94,7 +95,7 @@ scene.Barcode.prototype._toZpl = function (T, I) {
 
   commands.push(['^BY' + barWidth, barRatio]);
 
-  // 바코드의 좌표가 같아도 큐알은 10만큼 내려가있어서 좌표를 10만큼 올려준다.
+  // 바코드의 좌표가 같아도 큐알은 크기에 상관없이 좌표가 10만큼 내려가있다. 그러므로 큐알일 때에는 좌표를 10만큼 올려준다.
   if (symbol == 'qrcode') commands.push(['^FO' + left, top - 10]);else commands.push(['^FO' + left, top]);
 
   if (showText && TWO_D_BARCODES.indexOf(symbol) == -1) {
@@ -522,7 +523,7 @@ scene.ImageView.prototype.toZpl = function (T, I) {
 
 exports.Image = scene.ImageView;
 
-},{"../utils/to-grf":16}],7:[function(require,module,exports){
+},{"../utils/to-grf":17}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -567,7 +568,7 @@ function drawTextAfter() {
   scene.Component.prototype.drawText = original_drawText;
 }
 
-},{"../../utils/has-variables":14}],9:[function(require,module,exports){
+},{"../../utils/has-variables":15}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -869,7 +870,7 @@ scene.Scene.prototype.toZpl = function (T, I, dpi) {
 
 exports.Scene = scene.Scene;
 
-},{"../../config":1,"../utils/to-grf":16,"./interceptors":9}],13:[function(require,module,exports){
+},{"../../config":1,"../utils/to-grf":17,"./interceptors":9}],13:[function(require,module,exports){
 'use strict';
 
 var _hasVariables = require('../utils/has-variables');
@@ -951,7 +952,14 @@ scene.Text.prototype._toZpl = function (T, I) {
 
 exports.Text = scene.Text;
 
-},{"../../config":1,"../utils/has-variables":14}],14:[function(require,module,exports){
+},{"../../config":1,"../utils/has-variables":15}],14:[function(require,module,exports){
+'use strict';
+
+scene.Variable.prototype._toZpl = function (T, I) {
+  return '';
+};
+
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -970,7 +978,7 @@ function hasVariables(text) {
   return false;
 }
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1081,7 +1089,7 @@ function binarize(width, height, data) {
   return binarized;
 }
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1202,4 +1210,4 @@ function getGrfCommand(bounds, src) {
   });
 }
 
-},{"./rgb-binarize":15}]},{},[2]);
+},{"./rgb-binarize":16}]},{},[2]);
