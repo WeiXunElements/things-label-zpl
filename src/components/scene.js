@@ -93,7 +93,9 @@ scene.Scene.prototype.toTemplateGRF = function(T) {
       }, canvas.toDataURL()));
 
       if(T) {
-        this.root.forEach(component => {
+        this.root.components.filter(component => {
+          return component.get('type') !== 'variable'
+        }).forEach(component => {
           promises.push(component.toZpl(T, true)); // [T]emplate, [I]mage 파라미터를 패스한다.
         });
       }
