@@ -959,6 +959,8 @@ scene.Variable.prototype._toZpl = function (T, I) {
   return '';
 };
 
+exports.Variable = scene.Variable;
+
 },{}],15:[function(require,module,exports){
 "use strict";
 
