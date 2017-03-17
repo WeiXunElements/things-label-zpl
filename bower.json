@@ -1,6 +1,6 @@
 {
   "name": "things-label-zpl",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "zpl command converter: zpl command -> things-scene's model, things-scene's model -> zpl command",
   "main": "index.js",
   "authors": [
