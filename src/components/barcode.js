@@ -108,7 +108,13 @@ scene.Barcode.prototype._toZpl = function(T, I) {
 	}
 
   commands.push(['^BY' + barWidth, barRatio]);
-  commands.push(['^FO' + left, top]);
+
+	// 바코드의 좌표가 같아도 큐알은 크기에 상관없이 좌표가 10만큼 내려가있다. 그러므로 큐알일 때에는 좌표를 10만큼 올려준다.
+	if(symbol == 'qrcode')
+  	commands.push(['^FO' + left, top - 10]);
+	else
+		commands.push(['^FO' + left, top]);
+
 
 	if (showText && TWO_D_BARCODES.indexOf(symbol) == -1) {
 		barHeight -= (scale_w * 6 + 8);	// barcode 높이는 문자 뺀 다음의 높이임.
