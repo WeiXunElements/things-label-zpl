@@ -211,7 +211,7 @@ scene.Barcode.prototype._toZpl = function (T, I) {
       commands.push(['^BU' + orientation, barHeight, showText, textAbove]);
       break;
     case 'datamatrix':
-      commands.push(['^BX' + '']); // TODO
+      commands.push(['^BX' + orientation, Math.floor(barWidth * 1.5)]);
       break;
     case 'postal':
       // bwip에서 지원하지 않는 바코드.

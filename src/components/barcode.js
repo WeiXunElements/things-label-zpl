@@ -219,10 +219,10 @@ scene.Barcode.prototype._toZpl = function(T, I) {
     break;
   case 'upca'            :
 		// 사이즈 양옆으로 커짐
-    commands.push(['^BU' + orientation, barHeight, showText, textAbove, ]);
+    commands.push(['^BU' + orientation, barHeight, showText, textAbove]);
     break;
   case 'datamatrix'      :
-    commands.push(['^BX' + '']); // TODO
+    commands.push(['^BX' + orientation, Math.floor(barWidth * 1.5)]);
     break;
   case 'postal'          :	// bwip에서 지원하지 않는 바코드.
     commands.push(['^BZ' + orientation, barHeight, showText, textAbove]);
