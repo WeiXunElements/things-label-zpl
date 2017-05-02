@@ -117,7 +117,7 @@ scene.Scene.prototype.toTemplateGRF = function(T) {
   });
 }
 
-scene.Scene.prototype.toZpl = function(T, I, dpi) {
+scene.Scene.prototype.toZpl = function(T, I, dpi, zplSetting) {
 
   /* 기본 DPI를 저장. 완료후에 복구. */
   var origin_dpi = config.dpi;
@@ -135,6 +135,7 @@ scene.Scene.prototype.toZpl = function(T, I, dpi) {
         resolve([
             '^XA',
             '^PW' + widthInDots + '\n',
+            zplSetting,
             result,
             '^XZ'
           ].join('\n')
@@ -154,6 +155,7 @@ scene.Scene.prototype.toZpl = function(T, I, dpi) {
         resolve([
             '^XA',
             '^PW' + widthInDots + '\n',
+            zplSetting,
             result,
             '^XZ'
           ].join('\n')
