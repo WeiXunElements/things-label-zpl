@@ -5,7 +5,7 @@ global.screen = {
   height: 800
 };
 
-require('things-scene/things-scene-min');
+require('things-scene-core/things-scene-min');
 global.bwip = require('bwip/bwip-min');
 require('things-scene-barcode/things-scene-barcode-min');
 
