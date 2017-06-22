@@ -58,7 +58,7 @@ scene.Component.prototype.toZplForText = function(T, I) {
       text = text.replace(/\n/g, '\\&\n')
 
     var commands = [
-      ['^FO' + left, top],
+      ['^FO' + left, top + (charHeight / 6)],
       // ['^A@'+orientation, charHeight, charWidth * 0.75],
       ['^A' + fontNo + orientation, Math.round(charHeight), Math.round(charWidth)], // FIXME
     ];

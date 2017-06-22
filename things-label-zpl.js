@@ -934,7 +934,7 @@ scene.Component.prototype.toZplForText = function (T, I) {
   // ^FB가 있을때에 \&는 개행 명령어임.
   if (text.indexOf('\n') != -1) text = text.replace(/\n/g, '\\&\n');
 
-  var commands = [['^FO' + left, top],
+  var commands = [['^FO' + left, top + charHeight / 6],
   // ['^A@'+orientation, charHeight, charWidth * 0.75],
   ['^A' + fontNo + orientation, Math.round(charHeight), Math.round(charWidth)]];
 
