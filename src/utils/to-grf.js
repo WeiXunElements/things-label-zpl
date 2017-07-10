@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 import { binarize } from './rgb-binarize'
 
 function getGuid() {

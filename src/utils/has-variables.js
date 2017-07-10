@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 export function hasVariables(text) {
   if(!text)
     return false;

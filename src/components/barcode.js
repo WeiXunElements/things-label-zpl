@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 var config = require('../../config').config
 
 var qrScaleTable = {

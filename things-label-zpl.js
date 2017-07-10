@@ -1,6 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 var config = {
 	fontNo: '6',
 	dpi: 203
@@ -12,6 +15,9 @@ exports.config = config;
 },{}],2:[function(require,module,exports){
 'use strict';
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 require('./src/components/component');
 require('./src/components/text');
 require('./src/components/rect');
@@ -26,6 +32,9 @@ require('./src/components/scene');
 },{"./src/components/barcode":3,"./src/components/component":4,"./src/components/ellipse":5,"./src/components/image":6,"./src/components/line":10,"./src/components/rect":11,"./src/components/scene":12,"./src/components/text":13,"./src/components/variable":14}],3:[function(require,module,exports){
 'use strict';
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 var config = require('../../config').config;
 
 var qrScaleTable = {
@@ -250,6 +259,9 @@ exports.Barcode = scene.Barcode;
 },{"../../config":1}],4:[function(require,module,exports){
 'use strict';
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 var config = require('../../config').config;
 
 var DEFAULT_FONT_SIZE = 15;
@@ -455,6 +467,9 @@ exports.Component = scene.Component;
 },{"../../config":1}],5:[function(require,module,exports){
 'use strict';
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 require('./text');
 
 scene.Component.prototype.toZplForEllipse = function (bounds, lineColor, borderThickness) {
@@ -520,7 +535,10 @@ scene.ImageView.prototype.toZpl = function (T, I) {
       reject('Image not found. Check image URL.');
     });
   });
-};
+}; /*
+    * Copyright © HatioLab Inc. All rights reserved.
+    */
+
 
 exports.Image = scene.ImageView;
 
@@ -532,6 +550,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.drawBarcodeBefore = drawBarcodeBefore;
 exports.drawBarcodeAfter = drawBarcodeAfter;
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 var original_draw = scene.Barcode.prototype.draw;
 
 function drawBarcodeBefore() {
@@ -556,8 +577,9 @@ exports.drawTextAfter = drawTextAfter;
 
 var _hasVariables = require('../../utils/has-variables');
 
-var original_drawText = scene.Component.prototype.drawText;
-
+var original_drawText = scene.Component.prototype.drawText; /*
+                                                             * Copyright © HatioLab Inc. All rights reserved.
+                                                             */
 function drawTextBefore() {
   scene.Component.prototype.drawText = function (context) {
     if ((0, _hasVariables.hasVariables)(this.get('text'))) return;
@@ -582,6 +604,9 @@ var _drawText = require('./draw-text');
 
 var _barcodeDraw = require('./barcode-draw');
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 function beforeDraw(T) {
   if (T) // [T]emplate화 하는 경우에만, drawText를 인터셉트한다.
     (0, _drawText.drawTextBefore)();
@@ -599,6 +624,9 @@ function afterDraw(T) {
 },{"./barcode-draw":7,"./draw-text":8}],10:[function(require,module,exports){
 'use strict';
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 require('./rect');
 require('./text');
 
@@ -662,6 +690,9 @@ exports.Line = scene.Line;
 },{"./rect":11,"./text":13}],11:[function(require,module,exports){
 'use strict';
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 require('./text');
 
 scene.Component.prototype.toZplForRect = function (bounds, lineColor, borderThickness, round) {
@@ -714,6 +745,9 @@ var _toGrf = require('../utils/to-grf');
 
 var _interceptors = require('./interceptors');
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 var config = require('../../config').config;
 
 /**
@@ -878,7 +912,10 @@ exports.Scene = scene.Scene;
 
 var _hasVariables = require('../utils/has-variables');
 
-var config = require('../../config').config;
+var config = require('../../config').config; /*
+                                              * Copyright © HatioLab Inc. All rights reserved.
+                                              */
+
 
 var MAX_NUMBER_OF_LINES = 100;
 
@@ -958,6 +995,9 @@ exports.Text = scene.Text;
 },{"../../config":1,"../utils/has-variables":15}],14:[function(require,module,exports){
 'use strict';
 
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 scene.Variable.prototype._toZpl = function (T, I) {
   return '';
 };
@@ -971,6 +1011,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.hasVariables = hasVariables;
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 function hasVariables(text) {
   if (!text) return false;
 
@@ -990,6 +1033,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.binarize = binarize;
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 var HISTOGRAM_LENGH = 256;
 var R = 0;
 var G = 1;
@@ -1110,7 +1156,10 @@ function getGuid() {
     return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   }
   return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
-}
+} /*
+   * Copyright © HatioLab Inc. All rights reserved.
+   */
+
 
 function binToHex(nibble) {
   return parseInt(nibble, 2).toString(16).toUpperCase() || '';

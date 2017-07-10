@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 global.Canvas = require('canvas');
 global.Image = Canvas.Image;
 global.screen = {

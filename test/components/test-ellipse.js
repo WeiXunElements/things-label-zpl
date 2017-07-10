@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 import { expect } from 'chai'
 import { parseZpl } from '../util'
 

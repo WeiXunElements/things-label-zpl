@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 require('./text');
 
 scene.Component.prototype.toZplForEllipse = function(bounds, lineColor, borderThickness) {

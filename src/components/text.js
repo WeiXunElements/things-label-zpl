@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 import { hasVariables } from '../utils/has-variables'
 var config = require('../../config').config
 

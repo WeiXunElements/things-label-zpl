@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 const HISTOGRAM_LENGH = 256;
 const R = 0;
 const G = 1;

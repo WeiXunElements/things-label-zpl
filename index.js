@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 require('./src/components/component');
 require('./src/components/text');
 require('./src/components/rect');

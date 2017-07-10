@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 import { expect } from 'chai'
 
 import { hasVariables } from '../../src/utils/has-variables'

@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 import { getGrfCommand } from '../utils/to-grf'
 
 scene.ImageView.prototype.toZpl = function(T, I) {

@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 // zpl -> model
 var converter = require('./lib/converter')
 // var converter = require('./src/converter')

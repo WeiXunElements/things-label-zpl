@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 import { drawTextBefore, drawTextAfter } from './draw-text'
 import { drawBarcodeBefore, drawBarcodeAfter } from './barcode-draw'
 

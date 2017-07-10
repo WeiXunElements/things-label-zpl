@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 var config = require('../../config').config
 
 const DEFAULT_FONT_SIZE = 15;

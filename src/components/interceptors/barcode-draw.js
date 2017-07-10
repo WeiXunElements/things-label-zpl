@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 var original_draw = scene.Barcode.prototype.draw;
 
 export function drawBarcodeBefore() {

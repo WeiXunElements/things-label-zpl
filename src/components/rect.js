@@ -1,3 +1,6 @@
+/*
+ * Copyright © HatioLab Inc. All rights reserved.
+ */
 require('./text');
 
 scene.Component.prototype.toZplForRect = function(bounds, lineColor, borderThickness, round) {
