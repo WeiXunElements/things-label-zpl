@@ -220,7 +220,7 @@ scene.Barcode.prototype._toZpl = function (T, I) {
       commands.push(['^BU' + orientation, barHeight, showText, textAbove]);
       break;
     case 'datamatrix':
-      commands.push(['^BX' + orientation, barWidth == 1 ? 2 : Math.floor(barWidth * 1.5)]);
+      commands.push(['^BX' + orientation, barWidth == 1 ? 2 : Math.floor(barWidth * 1.5), '200']);
       // commands.push(['^BX' + orientation, barWidth]);
       break;
     case 'postal':
