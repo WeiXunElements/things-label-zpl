@@ -239,7 +239,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
      * M - Error Correction Level을 표준 레벨로 지정.
      * A - Data Input을 Automatic Input으로 지정. default이므로 생략 가능하지만 명시함.
      */
-		commands.push(['^FDMA,', text]);
+		commands.push(['^FDMA', text]);
     commands.push(['^FS']);
 	} else if (symbol === 'code39') {
 		// ^FS가 텍스트와 같은 줄에 있지 않으면 텍스트가 나오지 않는 바코드가 있음(ex : code39)
