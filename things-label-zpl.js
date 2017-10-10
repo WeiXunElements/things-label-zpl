@@ -220,6 +220,7 @@ scene.Barcode.prototype._toZpl = function (T, I) {
       commands.push(['^BU' + orientation, barHeight, showText, textAbove]);
       break;
     case 'datamatrix':
+      // DataMatrix는 3번째 속성에 값(Quality Level)을 200으로 주는것을 권장. 그 밑으론 옛날 기계에서 사용 하는 방식임
       commands.push(['^BX' + orientation, barWidth == 1 ? 2 : Math.floor(barWidth * 1.5), '200']);
       // commands.push(['^BX' + orientation, barWidth]);
       break;
@@ -230,7 +231,11 @@ scene.Barcode.prototype._toZpl = function (T, I) {
   }
 
   if (symbol === 'qrcode') {
-    commands.push(['^FDQ', text]);
+    /* QR코드의 노멀모드는 ^FD뒤에 MA또는 M을 붙임.
+     * M - Error Correction Level을 표준 레벨로 지정.
+     * A - Data Input을 Automatic Input으로 지정. default이므로 생략 가능하지만 명시함.
+     */
+    commands.push(['^FDMA,', text]);
     commands.push(['^FS']);
   } else if (symbol === 'code39') {
     // ^FS가 텍스트와 같은 줄에 있지 않으면 텍스트가 나오지 않는 바코드가 있음(ex : code39)
