@@ -110,13 +110,11 @@ scene.Barcode.prototype._toZpl = function(T, I) {
 		left += Number(textOffsetCorrection(symbol, barWidth))
 	}
 
-  commands.push(['^BY' + barWidth, barRatio]);
+  // 바코드의 좌표가 같아도 큐알은 크기에 상관없이 좌표가 10만큼 내려가있다. 그러므로 큐알일 때에는 좌표를 10만큼 올려준다.
+  top = symbol == 'qrcode' ? top - 10 : top
 
-	// 바코드의 좌표가 같아도 큐알은 크기에 상관없이 좌표가 10만큼 내려가있다. 그러므로 큐알일 때에는 좌표를 10만큼 올려준다.
-	if(symbol == 'qrcode')
-  	commands.push(['^FO' + left, top - 10]);
-	else
-		commands.push(['^FO' + left, top]);
+  commands.push(['^BY' + barWidth, barRatio]);
+  commands.push(['^FO' + left, top]);
 
 
 	if (showText && TWO_D_BARCODES.indexOf(symbol) == -1) {
@@ -226,8 +224,8 @@ scene.Barcode.prototype._toZpl = function(T, I) {
     break;
   case 'datamatrix'      :
     // DataMatrix는 3번째 속성에 값(Quality Level)을 200으로 주는것을 권장. 그 밑으론 옛날 기계에서 사용 하는 방식임
-    commands.push(['^BX' + orientation, barWidth == 1 ? 2 : Math.floor(barWidth * 1.5), '200']);
-		// commands.push(['^BX' + orientation, barWidth]);
+    // commands.push(['^BX' + orientation, barWidth == 1 ? 2 : Math.floor(barWidth * 1.5), '200']);
+		commands.push(['^BX' + orientation, barWidth, '200']);
     break;
   case 'postal'          :	// bwip에서 지원하지 않는 바코드.
     commands.push(['^BZ' + orientation, barHeight, showText, textAbove]);
