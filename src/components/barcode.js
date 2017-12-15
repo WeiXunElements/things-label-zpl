@@ -170,7 +170,7 @@ scene.Barcode.prototype._toZpl = function(T, I) {
     break;
   case 'maxicode'        :
 	// 바코드 출력해도 아무것도 안나옴
-    commands.push(['^BD' + orientation, , barHeight, showText, textAbove]);
+    commands.push(['^BD' + '2', '1', '1']);
     break;
   case 'ean13'           :
 		// bwip에서는 텍스트가 12자리 미만이면 그려지지 않음. 8개만 입력했을때 bwip은 X 표시가 뜨지만 스크립트 출력은 잘됨

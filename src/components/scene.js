@@ -121,13 +121,12 @@ scene.Scene.prototype.toTemplateGRF = function(T) {
 }
 
 scene.Scene.prototype.toZpl = function(T, I, dpi, zplSetting) {
-
   /* 기본 DPI를 저장. 완료후에 복구. */
   var origin_dpi = config.dpi;
 
   if(dpi)
     config.dpi = dpi;
-
+  
   var labelWidth = Number(this.root.get('width')) / 100;
 
   return new Promise((resolve, reject) => {
@@ -138,6 +137,9 @@ scene.Scene.prototype.toZpl = function(T, I, dpi, zplSetting) {
         resolve([
             '^XA',
             '^PW' + widthInDots + '\n',
+            '^SEE:UHANGUL.DAT^FS\n',
+            '^CW1,E:KFONT3.FNT\n',
+            '^CI26^FS\n',
             zplSetting,
             result,
             '^XZ'

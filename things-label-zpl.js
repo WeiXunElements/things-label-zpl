@@ -102,10 +102,11 @@ scene.Barcode.prototype._toZpl = function (T, I) {
     left += Number(textOffsetCorrection(symbol, barWidth));
   }
 
-  commands.push(['^BY' + barWidth, barRatio]);
-
   // 바코드의 좌표가 같아도 큐알은 크기에 상관없이 좌표가 10만큼 내려가있다. 그러므로 큐알일 때에는 좌표를 10만큼 올려준다.
-  if (symbol == 'qrcode') commands.push(['^FO' + left, top - 10]);else commands.push(['^FO' + left, top]);
+  top = symbol == 'qrcode' ? top - 10 : top;
+
+  commands.push(['^BY' + barWidth, barRatio]);
+  commands.push(['^FO' + left, top]);
 
   if (showText && TWO_D_BARCODES.indexOf(symbol) == -1) {
     barHeight -= scale_w * 6 + 8; // barcode 높이는 문자 뺀 다음의 높이임.
@@ -161,7 +162,7 @@ scene.Barcode.prototype._toZpl = function (T, I) {
       break;
     case 'maxicode':
       // 바코드 출력해도 아무것도 안나옴
-      commands.push(['^BD' + orientation,, barHeight, showText, textAbove]);
+      commands.push(['^BD' + '2', '1', '1']);
       break;
     case 'ean13':
       // bwip에서는 텍스트가 12자리 미만이면 그려지지 않음. 8개만 입력했을때 bwip은 X 표시가 뜨지만 스크립트 출력은 잘됨
@@ -885,7 +886,7 @@ scene.Scene.prototype.toZpl = function (T, I, dpi, zplSetting) {
       _this2.toTemplateGRF(T).then(function (result) {
         var widthInDots = Math.round(labelWidth / 2.54 * config.dpi);
 
-        resolve(['^XA', '^PW' + widthInDots + '\n', zplSetting, result, '^XZ'].join('\n'));
+        resolve(['^XA', '^PW' + widthInDots + '\n', '^SEE:UHANGUL.DAT^FS\n', '^CW1,E:KFONT3.FNT\n', '^CI26^FS\n', zplSetting, result, '^XZ'].join('\n'));
 
         config.dpi = origin_dpi;
       }, function (reason) {
