@@ -1,17 +1,15 @@
 {
   "name": "things-label-zpl",
-  "version": "0.1.35",
+  "version": "0.1.36",
   "description": "zpl command converter: zpl command -> things-scene's model, things-scene's model -> zpl command",
   "main": "index.js",
   "authors": [
-    "heartyoh@hatiolab.com"
+    "Shenzhen Weixun"
   ],
-  "license": "http://things-scene.hatiolab.com/EULA/",
   "keywords": [
     "zpl",
     "things-scene"
   ],
-  "homepage": "https://github.com/heartyoh/things-label-zpl#readme",
   "moduleType": [
     "globals",
     "node"

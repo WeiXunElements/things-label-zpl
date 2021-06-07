@@ -14,17 +14,12 @@
     "type": "git",
     "url": "git+https://github.com/heartyoh/things-label-zpl.git"
   },
-  "author": "",
-  "license": "http://things-scene.hatiolab.com/EULA/",
-  "bugs": {
-    "url": "https://github.com/heartyoh/things-label-zpl/issues"
-  },
+  "author": "Shenzhen Weixun",
   "browserify": {
     "transform": [
       "babelify"
     ]
   },
-  "homepage": "https://github.com/heartyoh/things-label-zpl#readme",
   "devDependencies": {
     "node-canvas": "Automattic/node-canvas",
     "babel-cli": "^6.3.17",
